@@ -1,0 +1,1174 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <title>IrrigaCana • USCO </title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#2563eb"/>
+  <link rel="manifest" href="manifest.json">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- jsPDF + AutoTable para PDF -->
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-8 px-4 font-sans text-gray-800">
+
+  <main class="w-full max-w-6xl">
+    <!-- Mensagens -->
+    <div id="mensagem" class="hidden p-3 rounded mb-4"></div>
+
+    <!-- Barra topo: status de conexão + exportações globais -->
+    <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+      <div class="flex items-center gap-2">
+        <span id="dotConexao" class="inline-block w-3 h-3 rounded-full bg-green-500"></span>
+        <span id="txtConexao" class="text-sm text-gray-700">Conectado</span>
+      </div>
+      <div class="text-xs text-gray-500">
+        As alterações feitas <strong>offline</strong> serão sincronizadas automaticamente ao restabelecer a conexão.
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="bg-white shadow rounded-lg">
+      <div class="flex border-b flex-wrap">
+        <button data-tab="projetos" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600">Projetos</button>
+        <button data-tab="cadastro" class="tab-btn px-4 py-3 font-semibold border-b-2 border-blue-600">Cadastro de Áreas</button>
+        <button data-tab="operador" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600">Áreas Cadastradas</button>
+        <button data-tab="relatorios" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600">Relatórios</button>
+      </div>
+
+      <!-- ===== ABA: PROJETOS ===== -->
+      <section id="content-projetos" class="p-6 hidden space-y-6">
+        <h1 class="text-2xl md:text-3xl font-semibold text-blue-900">Projetos</h1>
+        <p class="text-sm text-gray-600">Gerencie os nomes dos projetos. (Armazenados no documento <code>Projeto/6YqsO6D3ATYKiBNvuP9s</code>)</p>
+
+        <form id="formProjeto" class="flex gap-2 items-end">
+          <div class="flex-1">
+            <label for="novoProjeto" class="block text-sm font-semibold mb-1">Novo Projeto</label>
+            <input id="novoProjeto" class="w-full border rounded px-3 py-2" placeholder="Ex: Projeto A" />
+          </div>
+          <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Adicionar</button>
+        </form>
+
+        <div>
+          <h3 class="font-semibold mb-2">Lista de Projetos</h3>
+          <ul id="listaProjetos" class="space-y-2"></ul>
+        </div>
+      </section>
+
+      <!-- ===== ABA: CADASTRO ===== -->
+      <section id="content-cadastro" class="p-6 space-y-6">
+        <h1 class="text-2xl md:text-3xl font-semibold text-blue-900">Cadastro de Áreas</h1>
+
+        <form id="formArea" class="space-y-6" novalidate>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="projeto" class="block text-sm font-semibold mb-1">Projeto</label>
+              <select id="projeto" required class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"></select>
+            </div>
+            <div>
+              <label for="bombeamento" class="block text-sm font-semibold mb-1">Bombeamento</label>
+              <input id="bombeamento" required class="w-full border rounded px-3 py-2" placeholder="Ex: B01" />
+            </div>
+            <div>
+              <label for="bloco" class="block text-sm font-semibold mb-1">Nome do Bloco</label>
+              <input id="bloco" required class="w-full border rounded px-3 py-2" placeholder="Ex: 21 - Vila EB1" />
+            </div>
+            <div>
+              <label for="numeroEletrobomba" class="block text-sm font-semibold mb-1">N° Eletrobomba</label>
+              <input id="numeroEletrobomba" required class="w-full border rounded px-3 py-2" placeholder="Ex: 130001" />
+            </div>
+            <div>
+              <label for="numeroCarretel" class="block text-sm font-semibold mb-1">N° Carretel</label>
+              <input id="numeroCarretel" required class="w-full border rounded px-3 py-2" placeholder="Ex: 138001" />
+            </div>
+            <div>
+              <label for="tipoArea" class="block text-sm font-semibold mb-1">Tipo de Área</label>
+              <input id="tipoArea" required class="w-full border rounded px-3 py-2" placeholder="Ex: Pré-plantio" />
+            </div>
+            <div>
+              <label for="tipoIrrigacao" class="block text-sm font-semibold mb-1">Tipo de Irrigação</label>
+              <input id="tipoIrrigacao" required class="w-full border rounded px-3 py-2" placeholder="Ex: Carretel" />
+            </div>
+            <div>
+              <label for="tipoProduto" class="block text-sm font-semibold mb-1">Produto</label>
+              <input id="tipoProduto" required class="w-full border rounded px-3 py-2" placeholder="Ex: Água" />
+            </div>
+            <div>
+              <label for="horasPlanejadas" class="block text-sm font-semibold mb-1">Horas Planejadas (dia)</label>
+              <input id="horasPlanejadas" type="number" min="0" max="24" step="0.25" required class="w-full border rounded px-3 py-2" placeholder="Ex: 24" />
+            </div>
+            <div>
+              <label for="numeroCroqui" class="block text-sm font-semibold mb-1">N° Croqui</label>
+              <input id="numeroCroqui" required class="w-full border rounded px-3 py-2" placeholder="Ex: 0001" />
+            </div>
+          </div>
+
+          <div class="flex justify-end gap-3">
+            <button type="submit" id="salvarArea" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Salvar Área</button>
+            <button type="button" id="cancelarEdicao" class="hidden bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">Cancelar</button>
+          </div>
+        </form>
+
+        <hr class="border-gray-200" />
+
+        <div>
+          <label for="filtroProjetoCadastro" class="block mb-2 font-semibold text-gray-700">Filtrar Áreas por Projeto</label>
+          <select id="filtroProjetoCadastro" class="w-full max-w-sm border rounded px-3 py-2 mb-4 focus:ring-2 focus:ring-blue-500">
+            <option value="">-- Todos os Projetos --</option>
+          </select>
+        </div>
+
+        <div id="listaAreasCadastro" class="space-y-3"></div>
+      </section>
+
+      <!-- ===== ABA: OPERADOR ===== -->
+      <section id="content-operador" class="p-6 hidden space-y-6">
+        <div class="flex flex-col md:flex-row md:items-end gap-4">
+          <div class="flex-1">
+            <h2 class="text-2xl md:text-3xl font-semibold text-blue-900">Áreas Cadastradas (Operador)</h2>
+          </div>
+          <div class="flex gap-2">
+            <button id="btnExportCSV" class="bg-emerald-600 text-white px-3 py-2 rounded hover:bg-emerald-700 text-sm">Exportar CSV (dia)</button>
+            <button id="btnExportPDF" class="bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700 text-sm">Exportar PDF (dia)</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block mb-1 font-semibold" for="filtroProjetoOperador">Projeto</label>
+            <select id="filtroProjetoOperador" class="w-full border rounded px-3 py-2">
+              <option value="">-- Todos os Projetos --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold" for="filtroDataOperador">Data</label>
+            <input type="date" id="filtroDataOperador" class="w-full border rounded px-3 py-2" />
+          </div>
+          <div class="flex items-end">
+            <button id="btnFiltrarOperador" class="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Aplicar Filtros</button>
+          </div>
+        </div>
+
+        <div id="listaAreasOperador" class="space-y-3"></div>
+      </section>
+
+      <!-- ===== ABA: RELATÓRIOS ===== -->
+      <section id="content-relatorios" class="p-6 hidden space-y-6">
+        <div class="flex flex-col md:flex-row md:items-end gap-4">
+          <div class="flex-1">
+            <h2 class="text-2xl md:text-3xl font-semibold text-blue-900">Relatórios</h2>
+            <p class="text-sm text-gray-600">Consolidação diária por projeto e por área.</p>
+          </div>
+          <div class="flex gap-2">
+            <button id="btnExportCSVRel" class="bg-emerald-600 text-white px-3 py-2 rounded hover:bg-emerald-700 text-sm">Exportar CSV (Relatório)</button>
+            <button id="btnExportPDFRel" class="bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700 text-sm">Exportar PDF (Relatório)</button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block mb-1 font-semibold" for="filtroProjetoRel">Projeto</label>
+            <select id="filtroProjetoRel" class="w-full border rounded px-3 py-2">
+              <option value="">-- Todos os Projetos --</option>
+            </select>
+          </div>
+          <div>
+            <label class="block mb-1 font-semibold" for="filtroDataRel">Data</label>
+            <input type="date" id="filtroDataRel" class="w-full border rounded px-3 py-2" />
+          </div>
+          <div class="flex items-end">
+            <button id="btnGerarRelatorio" class="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Gerar</button>
+          </div>
+        </div>
+
+        <div id="sumarioRel" class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
+          <div class="bg-blue-50 border border-blue-200 p-3 rounded">
+            <div class="text-xs text-blue-700">Horas Planejadas</div>
+            <div id="sumPlanejadas" class="text-xl font-semibold text-blue-900">0</div>
+          </div>
+          <div class="bg-amber-50 border border-amber-200 p-3 rounded">
+            <div class="text-xs text-amber-700">Horas Paradas</div>
+            <div id="sumParadas" class="text-xl font-semibold text-amber-900">0</div>
+          </div>
+          <div class="bg-emerald-50 border border-emerald-200 p-3 rounded">
+            <div class="text-xs text-emerald-700">Horas Rodadas</div>
+            <div id="sumRodadas" class="text-xl font-semibold text-emerald-900">0</div>
+          </div>
+          <div class="bg-purple-50 border border-purple-200 p-3 rounded">
+            <div class="text-xs text-purple-700">Eficiência</div>
+            <div id="sumEficiencia" class="text-xl font-semibold text-purple-900">0%</div>
+          </div>
+        </div>
+
+        <div id="tabelaRel" class="space-y-3 mt-4"></div>
+      </section>
+    </div>
+  </main>
+
+  <!-- Modal: Registrar Parada -->
+  <div id="modalParada" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-40">
+    <div class="bg-white w-full max-w-xl rounded-lg shadow-lg p-6 relative">
+      <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
+      <h3 class="text-xl font-semibold mb-4">Registrar Parada</h3>
+
+      <div id="modalInfoArea" class="text-sm text-gray-700 mb-4"></div>
+
+      <form id="formParada" class="space-y-4" novalidate>
+        <fieldset class="border rounded p-3">
+          <legend class="font-semibold text-gray-800">Houve parada?</legend>
+          <label class="inline-flex items-center mr-6 cursor-pointer">
+            <input type="radio" name="houveParadaModal" value="sim" class="form-radio text-blue-600" required />
+            <span class="ml-2">Sim</span>
+          </label>
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" name="houveParadaModal" value="nao" class="form-radio text-blue-600" />
+            <span class="ml-2">Não</span>
+          </label>
+        </fieldset>
+
+        <div id="camposParada" class="hidden space-y-3">
+          <div>
+            <label class="block text-sm font-semibold">Tipo de equipamento</label>
+            <select id="codParada" class="w-full border rounded px-3 py-2" required>
+              <option value="">Selecione</option>
+              <option value="E">Eletrobomba (E)</option>
+              <option value="C">Carretel (C)</option>
+              <option value="R">Rede (R)</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold">Equipamento/ Rede com problema</label>
+            <input id="equipamentoProblemaModal" type="text" class="w-full border rounded px-3 py-2" placeholder="Ex: EB-05 ou Rede 3" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold">Descrição da Parada (código)</label>
+            <select id="descricaoParada" class="w-full border rounded px-3 py-2" required></select>
+          </div>
+
+          <div>
+            <label class="block text-sm font-semibold">Descrição do Problema (livre)</label>
+            <textarea id="descricaoProblemaLivre" class="w-full border rounded px-3 py-2" rows="2" placeholder="Explique o problema para agilizar o socorro"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-sm font-semibold">Início</label>
+              <input id="inicioParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold">Término</label>
+              <input id="fimParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
+            </div>
+          </div>
+
+          <div class="text-sm text-gray-700">Duração: <span id="duracaoParada">-</span></div>
+          <div id="alertOverlap" class="hidden text-sm text-red-600">⚠️ O intervalo informado se sobrepõe a uma parada já registrada.</div>
+        </div>
+
+        <div class="flex justify-end gap-3 pt-2">
+          <button type="button" id="cancelarParada" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Cancelar</button>
+          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Salvar</button>
+        </div>
+      </form>
+
+      <hr class="my-4" />
+
+      <div>
+        <h4 class="font-semibold mb-2">Histórico do dia</h4>
+        <div id="historicoParadas" class="max-h-60 overflow-auto space-y-2 text-sm"></div>
+      </div>
+    </div>
+  </div>
+
+<!-- ===== APP JS (CORRIGIDO + OFFLINE INDEXEDDB MULTI-ABA + RELATÓRIOS) ===== -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
+  import {
+    getFirestore, collection, addDoc, getDocs, doc, getDoc, updateDoc, deleteDoc,
+    query, where, orderBy, serverTimestamp, onSnapshot, setDoc,
+    enableMultiTabIndexedDbPersistence
+  } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js";
+
+  // ===== Configuração do Firebase =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyCVLmT9ze8br21yZc7w3x6RyImy0_34NOk",
+    authDomain: "irrigac-dc6ca.firebaseapp.com",
+    projectId: "irrigac-dc6ca",
+    storageBucket: "irrigac-dc6ca.firebasestorage.app",
+    messagingSenderId: "410561274798",
+    appId: "1:410561274798:web:4b2a494aefad676262de3f",
+    measurementId: "G-9C2SDV3NNR"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // ===== Persistência Offline (IndexedDB + Multi-Aba) =====
+  enableMultiTabIndexedDbPersistence(db).catch(err => {
+    if (err.code === 'failed-precondition') {
+      console.warn("Persistência offline não habilitada: múltiplas abas abertas e o navegador não suporta multi-aba.");
+    } else if (err.code === 'unimplemented') {
+      console.warn("O navegador não suporta persistência offline (IndexedDB indisponível).");
+    } else {
+      console.warn("Erro ao habilitar persistência offline:", err);
+    }
+  });
+
+  // ===== Funções utilitárias =====
+  const $ = sel => document.querySelector(sel);
+  const $$ = sel => Array.from(document.querySelectorAll(sel));
+
+  function showMessage(text, type = "success") {
+    const msgEl = $("#mensagem");
+    msgEl.textContent = text;
+    msgEl.className = `p-3 rounded mb-4 ${
+      type === "error"
+        ? "bg-red-100 text-red-700 border border-red-400"
+        : "bg-green-100 text-green-700 border border-green-400"
+    }`;
+    msgEl.classList.remove("hidden");
+    clearTimeout(showMessage._t);
+    showMessage._t = setTimeout(() => msgEl.classList.add("hidden"), 5000);
+  }
+
+    const codigosParada = [
+      "937 - AGUARDANDO ELETRICISTA","957 - AGURDANDO MECÂNICO INTERNO","903 - AGUARDANDO MECÂNICO",
+      "961 - ENTUPIMENTO","913 - FALTA DE COMB. / LUBRIF.","960 - FALTA ENERGIA","919 - HORÁRIO PONTA",
+      "921 - FALTA DE ÁGUA","922 - FALTA DE VINHAÇA","911 - FALTA CAMINHÃO","963 - PARADA APLIC.ADUBO/HERB.",
+      "924 - FALTA DE OPERADOR","964 - FALTA TUBULAÇÃO","975 - FALTA ÁREA","959 - LIMPEZA LAVAGEM DO EQP.",
+      "976 - PIVOTAGEM","977 - PARADA CONSERTO EXTERNO","978 - DESLIGAMENTO QUEIMA",
+      "979 - AGUARDANDO LIBERAÇÃO ÁREA/CARREGAMENTO","948 - AGUARDANDO CARREGAR",
+      "982 - AGUARDANDO RECOLHIMENTO CARRETEL","962 - DESCARREGANDO VINHAÇA","909 - ENTUPIMENTO/EMBUCHAMENTO",
+      "917 - REFEIÇÃO","942 - PARADA INDÚSTRIA","907 - CLIMA","904 - AGUARDANDO ORDENS",
+      "967 - AGUARDANDO P/MUDANÇA","945 - REPARO ADUTORA","926 - FALTA TRATOR/TRANSBORDO",
+      "968 - TEMPO DE AVANÇO","969 - LIMPEZA TUBULAÇÃO","970 - ASPERSÃO COMPLEMENTAR",
+      "972 - TEMPO APLIC.EXCEDIDO","974 - CARREGAMENTO VINHAÇA","929 - PARADA PROGRAMADA",
+      "916 - MUDANÇA DE ÁREA","973 - SOLICITAÇÃO EQP. CARREGAMENTO","966 - AGUARDANDO ORDENS USINA"
+    ];
+
+    function todayYMD() {
+      const d = new Date();
+      const off = d.getTimezoneOffset(); d.setMinutes(d.getMinutes() - off);
+      return d.toISOString().slice(0,10);
+    }
+    function toISOFromDatetimeLocal(v) { return new Date(v).toISOString(); }
+    function formatDateTime(d) { try { return new Date(d).toLocaleString("pt-BR"); } catch { return "-"; } }
+
+    // ===== Conexão (UI) =====
+    function updateConnUI() {
+      const online = navigator.onLine;
+      $("#dotConexao").className = "inline-block w-3 h-3 rounded-full " + (online ? "bg-green-500" : "bg-orange-500");
+      $("#txtConexao").textContent = online ? "Conectado" : "Offline (dados serão sincronizados)";
+    }
+    window.addEventListener("online", updateConnUI);
+    window.addEventListener("offline", updateConnUI);
+    updateConnUI();
+
+    // ===== Service Worker =====
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("./sw.js").catch(err => console.warn("SW falhou:", err));
+    }
+
+  // ===== Constantes de elementos =====
+    const COLLECTION = "Areas";
+    const sections = {
+      projetos: $("#content-projetos"),
+      cadastro: $("#content-cadastro"),
+      operador: $("#content-operador"),
+      relatorios: $("#content-relatorios"),
+    };
+    const selectProjeto = $("#projeto");
+    const filtroProjetoCadastro = $("#filtroProjetoCadastro");
+    const filtroProjetoOperador = $("#filtroProjetoOperador");
+    const filtroProjetoRel = $("#filtroProjetoRel");
+    const listaAreasCadastro = document.getElementById("listaAreasCadastro");
+    const listaAreasOperador = $("#listaAreasOperador");
+    
+    const filtroDataOperador = $("#filtroDataOperador");
+    const filtroDataRel = $("#filtroDataRel");
+
+
+    
+        // ===== Abas =====
+    const tabBtns = $$(".tab-btn");
+    
+    function switchTab(name){
+      Object.entries(sections).forEach(([k,sec])=>{
+        if (k === name) sec.classList.remove("hidden"); else sec.classList.add("hidden");
+      });
+      tabBtns.forEach(btn=>{
+        if (btn.dataset.tab === name) btn.classList.add("border-b-2","border-blue-600","text-blue-700");
+        else btn.classList.remove("border-b-2","border-blue-600","text-blue-700");
+      });
+      // ações ao entrar na aba
+      if (name === "cadastro") listarAreasCadastro();
+      if (name === "operador") listarAreasOperador();
+    }
+    tabBtns.forEach(btn => btn.addEventListener("click", ()=> switchTab(btn.dataset.tab)));
+    switchTab("cadastro");
+
+    // ===== Cadastro de Áreas (CRUD) =====
+    
+    let editDocId = null;
+    
+    filtroDataOperador.value = todayYMD();
+    filtroDataRel.value = todayYMD();
+
+    
+    // ======= Projetos =======
+    const PROJ_DOC_ID = "6YqsO6D3ATYKiBNvuP9s";
+    const projetoDocRef = doc(db, "Projeto", PROJ_DOC_ID);
+
+    // Carrega e observa os projetos em tempo real
+    let projetosCache = [];
+    onSnapshot(projetoDocRef, (snap)=>{
+      try{
+        if (!snap.exists()) {
+          // cria documento base vazio na primeira vez
+          setDoc(projetoDocRef, { Projeto_1: "Projeto Padrão" }, { merge: true }).catch(()=>{});
+          projetosCache = ["Projeto Padrão"];
+        } else {
+          const data = snap.data() || {};
+          projetosCache = Object.values(data).map(p => String(p||"").trim()).filter(Boolean).sort();
+        }
+        preencherSelectsProjeto();
+      }catch(e){
+        console.error("onSnapshot projetos:", e);
+        showMessage("Erro ao observar projetos.", "error");
+      }
+    }, (err)=>{
+      console.error("Snapshot projetos falhou:", err);
+      showMessage("Erro ao carregar projetos.", "error");
+      preencherSelectsProjeto(true);
+    });
+
+    function preencherSelectsProjeto(fallback=false){
+      const optsCadastro = ['<option value="">-- Selecione um Projeto --</option>'];
+      const optsFiltro = ['<option value="">-- Todos os Projetos --</option>'];
+      const lista = fallback ? [] : projetosCache;
+      lista.forEach(p => {
+        optsCadastro.push(`<option value="${p}">${p}</option>`);
+        optsFiltro.push(`<option value="${p}">${p}</option>`);
+      });
+      selectProjeto.innerHTML = optsCadastro.join("");
+      filtroProjetoCadastro.innerHTML = optsFiltro.join("");
+      filtroProjetoOperador.innerHTML = optsFiltro.join("");
+      filtroProjetoRel.innerHTML = optsFiltro.join("");
+      renderListaProjetosUI();
+    }
+
+    // UI de Projetos (CRUD simples no mesmo doc como campos)
+    const listaProjetosEl = $("#listaProjetos");
+    function renderListaProjetosUI(){
+      listaProjetosEl.innerHTML = "";
+      if (!projetosCache.length) {
+        listaProjetosEl.innerHTML = `<li class="text-sm text-gray-600">Nenhum projeto cadastrado.</li>`;
+        return;
+      }
+      projetosCache.forEach((nome, idx)=>{
+        const li = document.createElement("li");
+        li.className = "flex items-center justify-between border rounded px-3 py-2";
+        li.innerHTML = `
+          <span>${nome}</span>
+          <div class="flex gap-2">
+            <button class="btnRenomear bg-yellow-400 px-2 py-1 rounded text-sm" data-idx="${idx}">Renomear</button>
+            <button class="btnRemover bg-red-500 text-white px-2 py-1 rounded text-sm" data-idx="${idx}">Remover</button>
+          </div>
+        `;
+        listaProjetosEl.appendChild(li);
+      });
+      // ações
+      listaProjetosEl.querySelectorAll(".btnRenomear").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const i = Number(btn.dataset.idx);
+          const atual = projetosCache[i];
+          const novo = prompt("Novo nome do projeto:", atual);
+          if (!novo || !novo.trim()) return;
+          await salvarProjetosList(projetosCache.map((p,ix)=> ix===i ? novo.trim() : p));
+          showMessage("Projeto renomeado.");
+        });
+      });
+      listaProjetosEl.querySelectorAll(".btnRemover").forEach(btn=>{
+        btn.addEventListener("click", async ()=>{
+          const i = Number(btn.dataset.idx);
+          if (!confirm("Remover este projeto da lista?")) return;
+          const novaLista = projetosCache.filter((_,ix)=> ix!==i);
+          await salvarProjetosList(novaLista);
+          showMessage("Projeto removido.");
+        });
+      });
+    }
+
+    async function salvarProjetosList(lista){
+      // mantém como campos: Projeto_1, Projeto_2, ...
+      const payload = {};
+      lista.forEach((p, i)=> payload[`Projeto_${i+1}`] = p);
+      // também remove campos antigos para evitar lixo:
+      // pega doc atual e apaga os que ultrapassarem
+      const snap = await getDoc(projetoDocRef);
+      const atual = snap.exists() ? Object.keys(snap.data()||{}) : [];
+      const updates = { ...payload };
+      for (const k of atual) if (!payload[k]) updates[k] = null; // apagará campo
+      await setDoc(projetoDocRef, updates, { merge: true });
+    }
+
+    $("#formProjeto").addEventListener("submit", async (e)=>{
+      e.preventDefault();
+      const nome = $("#novoProjeto").value.trim();
+      if (!nome) return showMessage("Informe o nome do projeto.", "error");
+      const lista = Array.from(new Set([...(projetosCache||[]), nome])).sort();
+      try{
+        await salvarProjetosList(lista);
+        $("#novoProjeto").value = "";
+        showMessage("Projeto adicionado.");
+      }catch(err){
+        console.error(err);
+        showMessage("Erro ao salvar projeto.", "error");
+      }
+    });
+
+    // ===== Observa a coleção de Áreas para atualizar as listas em tempo real
+    let unsubscribeAreas = null;
+    function observarAreas(){
+      if (unsubscribeAreas) unsubscribeAreas();
+      const areasRef = collection(db, COLLECTION);
+      unsubscribeAreas = onSnapshot(areasRef, () => {
+        // Atualiza as telas quando houver mudança
+        if (!sections.cadastro.classList.contains("hidden")) listarAreasCadastro();
+        if (!sections.operador.classList.contains("hidden")) listarAreasOperador();
+      }, (err)=>{
+        console.error("Snapshot Areas:", err);
+      });
+    }
+    observarAreas();
+
+    // ===== Listagem & CRUD de Áreas
+
+    async function listarAreasCadastro() {
+      listaAreasCadastro.innerHTML = `<div class="text-sm text-gray-600">Carregando...</div>`;
+      try {
+        const snap = await getDocs(collection(db, COLLECTION));
+        const filtro = (filtroProjetoCadastro.value || "").trim();
+        const frag = document.createDocumentFragment();
+        let count = 0;
+
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          if (filtro && data.projeto !== filtro) return;
+
+          const card = document.createElement("div");
+          card.className = "bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4";
+          const atualizado = data.atualizadoEm ? formatDateTime(data.atualizadoEm) : "-";
+
+          card.innerHTML = `
+            <div class="flex flex-col gap-1 max-w-3xl text-sm">
+              <div class="font-semibold text-base text-blue-900">${data.bloco || "-"}</div>
+              <div><strong>Projeto:</strong> ${data.projeto || "-"}</div>
+              <div><strong>Croqui:</strong> ${data.numeroCroqui || "-"}</div>
+              <div><strong>Bombeamento:</strong> ${data.bombeamento || "-"}</div>
+              <div><strong>Eletrobomba:</strong> ${data.numeroEletrobomba || "-"}</div>
+              <div><strong>Carretel:</strong> ${data.numeroCarretel || "-"}</div>
+              <div><strong>Tipo:</strong> ${data.tipoArea || "-"} • ${data.tipoIrrigacao || "-"}</div>
+              <div><strong>Produto:</strong> ${data.tipoProduto || "-"}</div>
+              <div><strong>Horas Planejadas (dia):</strong> ${Number(data.horasPlanejadas||0)}</div>
+              <div><strong>Atualizado:</strong> ${atualizado}</div>
+            </div>
+            <div class="flex gap-3">
+              <button class="btnEditar bg-yellow-400 px-3 py-1 rounded hover:bg-yellow-500" data-id="${docSnap.id}">Editar</button>
+              <button class="btnExcluir bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" data-id="${docSnap.id}">Excluir</button>
+            </div>
+          `;
+          frag.appendChild(card);
+          count++;
+        });
+
+        listaAreasCadastro.innerHTML = "";
+        listaAreasCadastro.appendChild(frag);
+
+        listaAreasCadastro.querySelectorAll(".btnEditar").forEach(b => b.addEventListener("click", () => carregarParaEdicao(b.dataset.id)));
+        listaAreasCadastro.querySelectorAll(".btnExcluir").forEach(b => b.addEventListener("click", async () => {
+          if (!confirm("Deseja realmente excluir esta área?")) return;
+          try {
+            await deleteDoc(doc(db, COLLECTION, b.dataset.id));
+            showMessage("Área excluída com sucesso.");
+          } catch (e) {
+            console.error(e);
+            showMessage("Erro ao excluir área.", "error");
+          }
+        }));
+
+        if (!count) listaAreasCadastro.innerHTML = `<div class="text-sm text-gray-600">Nenhuma área para o filtro.</div>`;
+      } catch (e) {
+        console.error(e);
+        listaAreasCadastro.innerHTML = `<div class="text-sm text-red-600">Erro ao carregar áreas.</div>`;
+      }
+    }
+
+    async function carregarParaEdicao(id) {
+      try {
+        const ref = doc(db, COLLECTION, id);
+        const snap = await getDoc(ref);
+        if (!snap.exists()) return showMessage("Área não encontrada.", "error");
+        const d = snap.data();
+        $("#projeto").value = d.projeto || "";
+        $("#bombeamento").value = d.bombeamento || "";
+        $("#bloco").value = d.bloco || "";
+        $("#numeroEletrobomba").value = d.numeroEletrobomba || "";
+        $("#numeroCarretel").value = d.numeroCarretel || "";
+        $("#tipoArea").value = d.tipoArea || "";
+        $("#tipoIrrigacao").value = d.tipoIrrigacao || "";
+        $("#tipoProduto").value = d.tipoProduto || "";
+        $("#horasPlanejadas").value = Number(d.horasPlanejadas||0);
+        $("#numeroCroqui").value = d.numeroCroqui || "";;
+        editDocId = id;
+        $("#cancelarEdicao").classList.remove("hidden");
+        switchTab("cadastro");
+        showMessage("Área carregada para edição.");
+      } catch (e) {
+        console.error(e);
+        showMessage("Erro ao carregar área.", "error");
+      }
+    }
+
+    $("#cancelarEdicao").addEventListener("click", () => {
+      editDocId = null; $("#formArea").reset(); $("#cancelarEdicao").classList.add("hidden");
+    });
+
+    $("#formArea").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const payload = {
+        projeto: $("#projeto").value.trim(),
+        bombeamento: $("#bombeamento").value.trim(),
+        bloco: $("#bloco").value.trim(),
+        numeroEletrobomba: $("#numeroEletrobomba").value.trim(),
+        numeroCarretel: $("#numeroCarretel").value.trim(),
+        tipoArea: $("#tipoArea").value.trim(),
+        tipoIrrigacao: $("#tipoIrrigacao").value.trim(),
+        tipoProduto: $("#tipoProduto").value.trim(),
+        horasPlanejadas: Number($("#horasPlanejadas").value || 0),
+        numeroCroqui:$("#numeroCroqui").value.trim(),
+
+        atualizadoEm: new Date().toISOString()
+      };
+      if (Object.entries(payload).some(([k,v]) => (k!=="horasPlanejadas" && !v))) return showMessage("Preencha todos os campos do cadastro.", "error");
+      try {
+        if (editDocId) {
+          await updateDoc(doc(db, COLLECTION, editDocId), payload);
+          showMessage("Área atualizada com sucesso.");
+        } else {
+          payload.criadoEm = new Date().toISOString();
+          await addDoc(collection(db, COLLECTION), payload);
+          showMessage("Área cadastrada com sucesso.");
+        }
+        editDocId = null; $("#formArea").reset(); $("#cancelarEdicao").classList.add("hidden");
+        listarAreasCadastro();
+      } catch (e) {
+        console.error(e);
+        showMessage("Erro ao salvar área.", "error");
+      }
+    });
+
+    filtroProjetoCadastro.addEventListener("change", listarAreasCadastro);
+
+    // ===== Operador =====
+    $("#btnFiltrarOperador").addEventListener("click", listarAreasOperador);
+
+    // modal
+    const modalParada = $("#modalParada");
+    const closeModalBtn = $("#closeModal");
+    const cancelarParadaBtn = $("#cancelarParada");
+    const formParada = $("#formParada");
+    const camposParada = $("#camposParada");
+    const duracaoParadaEl = $("#duracaoParada");
+    const overlapAlert = $("#alertOverlap");
+
+    let areaAtual = null; // {id, ...dados}
+    const descricaoSelect = $("#descricaoParada");
+    (function fillCodigos() {
+      descricaoSelect.innerHTML = `<option value="">Selecione</option>`;
+      codigosParada.forEach(c => descricaoSelect.appendChild(new Option(c, c)));
+    })();
+
+    formParada.querySelectorAll('input[name="houveParadaModal"]').forEach(r => {
+      r.addEventListener("change", (ev) => {
+        const selected = ev.target;
+        if (selected.value === "sim" && selected.checked) camposParada.classList.remove("hidden");
+        else if (selected.value === "nao" && selected.checked) camposParada.classList.add("hidden");
+      });
+    });
+
+    function calcularDuracaoModal() {
+      const inicio = $("#inicioParada").value;
+      const fim = $("#fimParada").value;
+      overlapAlert.classList.add("hidden");
+      if (!inicio || !fim) { duracaoParadaEl.textContent = "-"; return 0; }
+      const di = new Date(inicio), df = new Date(fim);
+      if (isNaN(di) || isNaN(df) || df <= di) { duracaoParadaEl.textContent = "-"; return 0; }
+      const minutos = (df - di) / 60000;
+      duracaoParadaEl.textContent = `${minutos.toFixed(0)} min (${(minutos/60).toFixed(2)} h)`;
+      return minutos / 60;
+    }
+    $("#inicioParada").addEventListener("input", calcularDuracaoModal);
+    $("#fimParada").addEventListener("input", calcularDuracaoModal);
+
+    function abrirModal(areaDoc) {
+      areaAtual = areaDoc;
+      $("#modalInfoArea").innerHTML = `
+        <div><strong>Projeto:</strong> ${areaDoc.projeto || "-"}</div>
+        <div><strong>Bloco:</strong> ${areaDoc.bloco || "-"}</div>
+        <div><strong>Bombeamento:</strong> ${areaDoc.bombeamento || "-"}</div>
+      `;
+      // reset
+      formParada.reset(); camposParada.classList.add("hidden"); duracaoParadaEl.textContent = "-"; overlapAlert.classList.add("hidden");
+      // defaults: agora e +30 min
+      const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+      const in30 = new Date(now); in30.setMinutes(in30.getMinutes() + 30);
+      $("#inicioParada").value = now.toISOString().slice(0,16);
+      $("#fimParada").value = in30.toISOString().slice(0,16);
+
+      modalParada.classList.remove("hidden"); modalParada.classList.add("flex");
+      carregarHistoricoParadas(areaDoc.id, filtroDataOperador.value);
+    }
+    function fecharModal(){ modalParada.classList.add("hidden"); modalParada.classList.remove("flex"); areaAtual = null; }
+    closeModalBtn.addEventListener("click", fecharModal);
+    cancelarParadaBtn.addEventListener("click", fecharModal);
+    modalParada.addEventListener("click", (e) => { if (e.target === modalParada) fecharModal(); });
+
+    async function carregarHistoricoParadas(areaId, ymd) {
+      const cont = $("#historicoParadas");
+      cont.innerHTML = `<div class="text-gray-600 text-sm">Carregando...</div>`;
+      try {
+        const start = new Date(ymd + "T00:00:00.000Z");
+        const end = new Date(ymd + "T23:59:59.999Z");
+
+        const ref = collection(doc(db, COLLECTION, areaId), "paradas");
+        const qy = query(ref,
+          where("inicioParada", ">=", start.toISOString()),
+          where("inicioParada", "<=", end.toISOString()),
+          orderBy("inicioParada", "asc")
+        );
+        const snap = await getDocs(qy);
+        if (snap.empty) { cont.innerHTML = `<div class="text-gray-600 text-sm">Sem registros para o dia.</div>`; return []; }
+
+        const itens = [];
+        const frag = document.createDocumentFragment();
+        snap.forEach(s => {
+          const p = s.data(); itens.push({ id: s.id, ...p });
+          const linha = document.createElement("div");
+          const durh = p.duracaoHoras != null ? Number(p.duracaoHoras).toFixed(2) : "-";
+          linha.className = "border rounded p-2";
+          linha.innerHTML = `
+            <div><strong>Houve:</strong> ${p.houveParada ? "Sim" : "Não"}</div>
+            ${p.houveParada ? `
+              <div><strong>Equip.:</strong> ${p.codParada || "-"} ${p.equipamentoProblema ? "• " + p.equipamentoProblema : ""}</div>
+              <div><strong>Descrição (código):</strong> ${p.descricaoParada || "-"}</div>
+              <div><strong>Problema:</strong> ${p.descricaoProblemaLivre || "-"}</div>
+              <div><strong>Início:</strong> ${formatDateTime(p.inicioParada)} • <strong>Fim:</strong> ${formatDateTime(p.fimParada)}</div>
+              <div><strong>Duração:</strong> ${durh} h</div>
+            ` : ``}
+            <div class="text-xs text-gray-500"><em>Registrado:</em> ${p.createdAt?.seconds ? new Date(p.createdAt.seconds*1000).toLocaleString("pt-BR") : "-"}</div>
+          `;
+          frag.appendChild(linha);
+        });
+        cont.innerHTML = ""; cont.appendChild(frag);
+        return itens;
+      } catch (e) {
+        console.error(e);
+        cont.innerHTML = `<div class="text-red-600 text-sm">Erro ao carregar histórico.</div>`;
+        return [];
+      }
+    }
+
+    function existeSobreposicao(registros, novoInicioIso, novoFimIso) {
+      const ni = new Date(novoInicioIso).getTime();
+      const nf = new Date(novoFimIso).getTime();
+      return registros.some(r => {
+        if (!r.houveParada) return false;
+        const ri = new Date(r.inicioParada).getTime();
+        const rf = new Date(r.fimParada).getTime();
+        return ni < rf && nf > ri;
+      });
+    }
+
+    formParada.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      if (!areaAtual?.id) return showMessage("Área inválida para registro.", "error");
+
+      const houveRad = formParada.querySelector('input[name="houveParadaModal"]:checked');
+      if (!houveRad) return showMessage("Informe se houve parada.", "error");
+      const houve = houveRad.value === "sim";
+
+      let payload = { houveParada: houve, createdAt: serverTimestamp() };
+
+      if (houve) {
+        const codParada = $("#codParada").value;
+        const desc = $("#descricaoParada").value;
+        const inicio = $("#inicioParada").value;
+        const fim = $("#fimParada").value;
+
+        const di = new Date(inicio), df = new Date(fim);
+        if (!codParada || !desc || isNaN(di) || isNaN(df) || df <= di) return showMessage("Verifique tipo, descrição e horários.", "error");
+
+        const inicioIso = toISOFromDatetimeLocal(inicio);
+        const fimIso = toISOFromDatetimeLocal(fim);
+
+        const historico = await carregarHistoricoParadas(areaAtual.id, $("#filtroDataOperador").value);
+        if (existeSobreposicao(historico, inicioIso, fimIso)) {
+          overlapAlert.classList.remove("hidden");
+          return;
+        } else {
+          overlapAlert.classList.add("hidden");
+        }
+
+        const durHoras = (df - di) / 3600000;
+        payload = {
+          ...payload,
+          codParada,
+          descricaoParada: desc,
+          descricaoProblemaLivre: $("#descricaoProblemaLivre").value.trim(),
+          equipamentoProblema: $("#equipamentoProblemaModal").value.trim(),
+          inicioParada: inicioIso,
+          fimParada: fimIso,
+          duracaoHoras: Number(durHoras.toFixed(2))
+        };
+      }
+
+      try {
+        const areaRef = doc(db, COLLECTION, areaAtual.id);
+        const subRef = collection(areaRef, "paradas");
+        await addDoc(subRef, payload); // offline -> fila
+        showMessage("Parada registrada. (Sincroniza offline se necessário) ✔️");
+        await carregarHistoricoParadas(areaAtual.id, $("#filtroDataOperador").value);
+      } catch (e) {
+        console.error(e);
+        showMessage("Erro ao registrar parada.", "error");
+      }
+    });
+
+    async function listarAreasOperador() {
+      listaAreasOperador.innerHTML = `<div class="text-sm text-gray-600">Carregando...</div>`;
+      try {
+        const ymd = filtroDataOperador.value || todayYMD();
+        const snap = await getDocs(collection(db, COLLECTION));
+        const filtroProj = (filtroProjetoOperador.value || "").trim();
+        const cards = [];
+        snap.forEach(docSnap => {
+          const data = docSnap.data();
+          if (filtroProj && data.projeto !== filtroProj) return;
+          cards.push({ id: docSnap.id, ...data });
+        });
+
+        const frag = document.createDocumentFragment();
+        for (const area of cards) {
+          const card = document.createElement("div");
+          card.className = "bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4";
+
+          const statusEl = document.createElement("div");
+          statusEl.className = "text-xs";
+          statusEl.textContent = "verificando...";
+          (async () => {
+            const st = await getStatusDia(area.id, ymd);
+            const badge = document.createElement("span");
+            badge.className = "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium";
+            if (st === "com_parada") { badge.className += " bg-red-100 text-red-800"; badge.textContent = "Com parada"; }
+            else if (st === "sem_parada") { badge.className += " bg-green-100 text-green-800"; badge.textContent = "Sem parada"; }
+            else { badge.className += " bg-gray-100 text-gray-800"; badge.textContent = "Sem registros"; }
+            statusEl.innerHTML = ""; statusEl.appendChild(badge);
+          })();
+
+          card.innerHTML = `
+            <div class="text-sm">
+              <div class="font-semibold text-base text-blue-900">${area.bloco || "-"}</div>
+              <div><strong>Projeto:</strong> ${area.projeto || "-"}</div>
+              <div><strong>Bombeamento:</strong> ${area.bombeamento || "-"}</div>
+              <div><strong>Eletrobomba:</strong> ${area.numeroEletrobomba || "-"}</div>
+              <div><strong>Carretel:</strong> ${area.numeroCarretel || "-"}</div>
+              <div><strong>Tipo:</strong> ${area.tipoArea || "-"} • ${area.tipoIrrigacao || "-"}</div>
+              <div><strong>Produto:</strong> ${area.tipoProduto || "-"}</div>
+              <div><strong>Horas Planejadas (dia):</strong> ${Number(area.horasPlanejadas||0)}</div>
+            </div>
+            <div class="flex flex-col md:items-end gap-2 w-full md:w-auto">
+              <div class="mb-1" id="statusWrap"></div>
+              <button class="btnAddParada bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full md:w-auto">+ Parada</button>
+              <button class="btnVerHistorico bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 w-full md:w-auto">Histórico (${ymd})</button>
+            </div>
+          `;
+
+          card.querySelector("#statusWrap").appendChild(statusEl);
+          card.querySelector(".btnAddParada").addEventListener("click", () => abrirModal(area));
+          card.querySelector(".btnVerHistorico").addEventListener("click", async () => {
+            abrirModal(area);
+            await carregarHistoricoParadas(area.id, ymd);
+          });
+
+          frag.appendChild(card);
+        }
+
+        listaAreasOperador.innerHTML = "";
+        if (!frag.childNodes.length) {
+          listaAreasOperador.innerHTML = `<div class="text-sm text-gray-600">Nenhuma área para os filtros.</div>`;
+        } else {
+          listaAreasOperador.appendChild(frag);
+        }
+      } catch (e) {
+        console.error(e);
+        listaAreasOperador.innerHTML = `<div class="text-sm text-red-600">Erro ao carregar áreas.</div>`;
+      }
+    }
+
+    async function getStatusDia(areaId, ymd) {
+      try {
+        const start = new Date(ymd + "T00:00:00.000Z");
+        const end = new Date(ymd + "T23:59:59.999Z");
+        const ref = collection(doc(db, COLLECTION, areaId), "paradas");
+        const qy = query(ref,
+          where("inicioParada", ">=", start.toISOString()),
+          where("inicioParada", "<=", end.toISOString())
+        );
+        const snap = await getDocs(qy);
+        if (snap.empty) return "sem_registro";
+        let comParada = false;
+        snap.forEach(s => { if (s.data().houveParada) comParada = true; });
+        return comParada ? "com_parada" : "sem_parada";
+      } catch (e) {
+        console.error("status dia erro:", e);
+        return "sem_registro";
+      }
+    }
+
+    // ===== Exportações (Operador) =====
+    $("#btnExportCSV").addEventListener("click", async () => {
+      const ymd = filtroDataOperador.value || todayYMD();
+      const dados = await coletarParadasDia(ymd);
+      const csv = toCSV(dados, true);
+      const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+      const blob = new Blob([bom, csv], { type: "text/csv;charset=utf-8;" });
+      downloadBlob(blob, `paradas_${ymd}.csv`);
+    });
+
+    $("#btnExportPDF").addEventListener("click", async () => {
+      const ymd = filtroDataOperador.value || todayYMD();
+      const dados = await coletarParadasDia(ymd);
+      gerarPDF(dados, ymd, "Relatório de Paradas");
+    });
+
+    // Coleta todas as paradas de todas as áreas para a data informada (YYYY-MM-DD)
+    async function coletarParadasDia(ymd) {
+      const start = new Date(ymd + "T00:00:00.000Z");
+      const end = new Date(ymd + "T23:59:59.999Z");
+      const areasSnap = await getDocs(collection(db, COLLECTION));
+      const all = [];
+
+      for (const areaDoc of areasSnap.docs) {
+        const area = areaDoc.data();
+        const ref = collection(doc(db, COLLECTION, areaDoc.id), "paradas");
+
+        const qy = query(
+          ref,
+          where("inicioParada", ">=", start.toISOString()),
+          where("inicioParada", "<=", end.toISOString()),
+          orderBy("inicioParada", "asc")
+        );
+
+        const paradasSnap = await getDocs(qy);
+        paradasSnap.forEach(p => {
+          const dados = p.data();
+          all.push({
+            projeto: area.projeto || "",
+            bloco: area.bloco || "",
+            bombeamento: area.bombeamento || "",
+            numeroEletrobomba: area.numeroEletrobomba || "",
+            numeroCarretel: area.numeroCarretel || "",
+            tipoArea: area.tipoArea || "",
+            tipoIrrigacao: area.tipoIrrigacao || "",
+            tipoProduto: area.tipoProduto || "",
+            horasPlanejadas: Number(area.horasPlanejadas||0).toFixed(2),
+            houveParada: dados.houveParada ? "Sim" : "Não",
+            codParada: dados.codParada || "",
+            equipamentoProblema: dados.equipamentoProblema || "",
+            descricaoParada: dados.descricaoParada || "",
+            descricaoProblema: dados.descricaoProblemaLivre || "",
+            inicioParada: formatDateTime(dados.inicioParada),
+            fimParada: formatDateTime(dados.fimParada),
+            duracaoHoras: dados.duracaoHoras != null ? Number(dados.duracaoHoras).toFixed(2) : "",
+            registradoEm: dados.createdAt?.seconds
+              ? new Date(dados.createdAt.seconds * 1000).toLocaleString("pt-BR")
+              : ""
+          });
+        });
+      }
+      return all;
+    }
+
+    function toCSV(dados, useSemicolon = false) {
+      if (!dados.length) return "Sem dados";
+      const sep = useSemicolon ? ";" : ",";
+      const colunas = Object.keys(dados[0]);
+      const header = colunas.join(sep);
+      const linhas = dados.map(row =>
+        colunas.map(c => `"${(row[c] ?? "").toString().replace(/"/g, '""')}"`).join(sep)
+      );
+      return header + "\n" + linhas.join("\n");
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function gerarPDF(dados, ymd, titulo="Relatório") {
+      if (!dados.length) {
+        showMessage("Sem dados para exportar.", "error");
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: "landscape" });
+
+      doc.setFontSize(14);
+      doc.text(`${titulo} - ${ymd}`, 14, 15);
+
+      const colunas = Object.keys(dados[0]);
+      const linhas = dados.map(d => colunas.map(c => d[c] || ""));
+
+      doc.autoTable({
+        head: [colunas],
+        body: linhas,
+        startY: 20,
+        styles: { fontSize: 8, cellPadding: 2 },
+        headStyles: { fillColor: [37, 99, 235] }
+      });
+
+      doc.save(`${titulo.replaceAll(" ","_").toLowerCase()}_${ymd}.pdf`);
+    }
+
+    // ===== RELATÓRIOS =====
+    $("#btnGerarRelatorio").addEventListener("click", gerarRelatoriosUI);
+    $("#btnExportCSVRel").addEventListener("click", async () => {
+      const { ymd, linhas } = await calcularRelatorio();
+      const csv = toCSV(linhas, true);
+      const bom = new Uint8Array([0xEF, 0xBB, 0xBF]);
+      const blob = new Blob([bom, csv], { type: "text/csv;charset=utf-8;" });
+      downloadBlob(blob, `relatorio_${ymd}.csv`);
+    });
+    $("#btnExportPDFRel").addEventListener("click", async () => {
+      const { ymd, linhas } = await calcularRelatorio();
+      gerarPDF(linhas, ymd, "Relatório Consolidado");
+    });
+
+    async function calcularRelatorio(){
+      const ymd = filtroDataRel.value || todayYMD();
+      const filtroProj = (filtroProjetoRel.value || "").trim();
+      const start = new Date(ymd + "T00:00:00.000Z");
+      const end = new Date(ymd + "T23:59:59.999Z");
+
+      const areasSnap = await getDocs(collection(db, COLLECTION));
+      const areas = areasSnap.docs
+        .map(d=>({ id: d.id, ...d.data() }))
+        .filter(a=> !filtroProj || a.projeto === filtroProj);
+
+      // mapa de horas paradas por área
+      const linhas = [];
+      let totalPlan = 0, totalPar = 0;
+
+      for (const area of areas){
+        const ref = collection(doc(db, COLLECTION, area.id), "paradas");
+        const qy = query(ref,
+          where("inicioParada", ">=", start.toISOString()),
+          where("inicioParada", "<=", end.toISOString())
+        );
+        const snap = await getDocs(qy);
+        let horasParadas = 0;
+        snap.forEach(s=>{
+          const p = s.data();
+          if (p.houveParada && p.duracaoHoras) horasParadas += Number(p.duracaoHoras)||0;
+        });
+
+        const planejadas = Number(area.horasPlanejadas||0);
+        const rodadas = Math.max(0, planejadas - horasParadas);
+        const efic = planejadas > 0 ? (rodadas/planejadas)*100 : 0;
+
+        totalPlan += planejadas;
+        totalPar += horasParadas;
+
+        linhas.push({
+          projeto: area.projeto || "",
+          bloco: area.bloco || "",
+          bombeamento: area.bombeamento || "",
+          eletrobomba: area.numeroEletrobomba || "",
+          carretel: area.numeroCarretel || "",
+          horasPlanejadas: planejadas.toFixed(2),
+          horasParadas: horasParadas.toFixed(2),
+          horasRodadas: rodadas.toFixed(2),
+          eficiencia: `${efic.toFixed(1)}%`,
+        });
+      }
+
+      // sumário
+      const rodadasTot = Math.max(0, totalPlan - totalPar);
+      const eficTot = totalPlan > 0 ? (rodadasTot/totalPlan)*100 : 0;
+
+      return {
+        ymd,
+        sum: { totalPlan, totalPar, rodadasTot, eficTot },
+        linhas
+      };
+    }
+
+    async function gerarRelatoriosUI(){
+      const sumPlane = $("#sumPlanejadas");
+      const sumPar = $("#sumParadas");
+      const sumRod = $("#sumRodadas");
+      const sumEf = $("#sumEficiencia");
+      const tabelaRel = $("#tabelaRel");
+
+      tabelaRel.innerHTML = `<div class="text-sm text-gray-600">Calculando...</div>`;
+      const { sum, linhas } = await calcularRelatorio();
+
+      sumPlane.textContent = sum.totalPlan.toFixed(2);
+      sumPar.textContent = sum.totalPar.toFixed(2);
+      sumRod.textContent = sum.rodadasTot.toFixed(2);
+      sumEf.textContent = `${sum.eficTot.toFixed(1)}%`;
+
+      if (!linhas.length){
+        tabelaRel.innerHTML = `<div class="text-sm text-gray-600">Sem dados para os filtros.</div>`;
+        return;
+      }
+
+      // Tabela HTML simples (além do PDF/CSV)
+      const table = document.createElement("div");
+      table.className = "overflow-auto";
+      const headers = ["Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","Horas Planejadas","Horas Paradas","Horas Rodadas","Eficiência"];
+      const thead = `<thead><tr>${headers.map(h=>`<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
+      const tbody = `<tbody>${linhas.map(l=>`
+        <tr class="hover:bg-gray-50">
+          <td class="px-3 py-2 text-sm">${l.projeto}</td>
+          <td class="px-3 py-2 text-sm">${l.bloco}</td>
+          <td class="px-3 py-2 text-sm">${l.bombeamento}</td>
+          <td class="px-3 py-2 text-sm">${l.eletrobomba}</td>
+          <td class="px-3 py-2 text-sm">${l.carretel}</td>
+          <td class="px-3 py-2 text-sm">${l.horasPlanejadas}</td>
+          <td class="px-3 py-2 text-sm text-amber-800">${l.horasParadas}</td>
+          <td class="px-3 py-2 text-sm text-emerald-800">${l.horasRodadas}</td>
+          <td class="px-3 py-2 text-sm font-semibold">${l.eficiencia}</td>
+        </tr>
+      `).join("")}</tbody>`;
+      table.innerHTML = `<table class="min-w-full">${thead}${tbody}</table>`;
+      tabelaRel.innerHTML = "";
+      tabelaRel.appendChild(table);
+    }
+
+    // ===== Inicialização =====
+    listarAreasCadastro(); // primeira render
+    // operador: render sob demanda ao entrar na aba
+  </script>
+</body>
+</html>

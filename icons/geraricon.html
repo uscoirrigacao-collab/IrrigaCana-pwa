@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>Gerar ícones padrão</title>
+<style>
+  body{font-family:system-ui,Segoe UI,Roboto,sans-serif;padding:24px}
+  button{background:#2563eb;color:#fff;border:0;border-radius:8px;padding:12px 16px;cursor:pointer}
+</style>
+</head>
+<body>
+  <h1>Gerar ícones padrão (PNG)</h1>
+  <p>Clique abaixo para gerar os ícones nos tamanhos <code>512x512</code>, <code>192x192</code>, <code>144x144</code>, <code>96x96</code> e <code>72x72</code>.</p>
+  <button id="gen">Gerar & Baixar</button>
+
+<script>
+const sizes = [512, 192, 144, 96, 72];
+
+function drawIcon(ctx, size){
+  // fundo
+  ctx.fillStyle = "#2563eb";
+  ctx.fillRect(0,0,size,size);
+
+  // círculo branco
+  ctx.beginPath();
+  ctx.arc(size*0.5, size*0.52, size*0.32, 0, Math.PI*2);
+  ctx.fillStyle = "#ffffff";
+  ctx.fill();
+
+  // gota/folha verde
+  ctx.beginPath();
+  ctx.moveTo(size*0.5, size*0.18);
+  ctx.quadraticCurveTo(size*0.78, size*0.38, size*0.5, size*0.72);
+  ctx.quadraticCurveTo(size*0.22, size*0.38, size*0.5, size*0.18);
+  ctx.fillStyle = "#22c55e";
+  ctx.fill();
+}
+
+function downloadCanvas(canvas, filename){
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+}
+
+document.getElementById("gen").addEventListener("click", () => {
+  sizes.forEach(size => {
+    const canvas = document.createElement("canvas");
+    canvas.width = size;
+    canvas.height = size;
+    drawIcon(canvas.getContext("2d"), size);
+    downloadCanvas(canvas, `icon-${size}.png`);
+  });
+});
+</script>
+</body>
+</html>
