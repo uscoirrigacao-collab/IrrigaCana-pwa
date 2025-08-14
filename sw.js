@@ -1,5 +1,5 @@
-// sw.js — cache básico para PWA offline
-const CACHE_NAME = "irriga-v1";
+// sw.js — cache básico para PWA offline (GitHub Pages compatível)
+const CACHE_NAME = "irriga-v2";
 const CORE_ASSETS = [
   "./",
   "./index.html",
@@ -62,7 +62,7 @@ self.addEventListener("fetch", (e) => {
       })
     );
   } else {
-    // network-first com fallback
+    // network-first com fallback para index.html (SPA / GitHub Pages fix)
     e.respondWith(
       fetch(e.request)
         .then((res) => {
@@ -71,11 +71,12 @@ self.addEventListener("fetch", (e) => {
           return res;
         })
         .catch(() => {
-          return caches.match(e.request).then((cached) => {
-            return cached || caches.match("./index.html");
-          });
+          return (
+            caches.match(e.request) ||
+            caches.match("./index.html") ||
+            caches.match("/")
+          );
         })
     );
   }
 });
-
