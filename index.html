@@ -26,7 +26,9 @@
       <div class="text-xs text-gray-500">
         As alterações feitas <strong>offline</strong> serão sincronizadas automaticamente ao restabelecer a conexão.
       </div>
+      <button id="btnDesbloquear" class="bg-blue-600 text-white px-2 py-2 rounded hover:bg-blue-700">Admin</button>
     </div>
+    
 
     <div class="flex border-b flex-wrap">
         <button data-tab="projetos" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Projetos</button>
@@ -36,6 +38,7 @@
         <button data-tab="operador" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600">Áreas Cadastradas</button>
 
         <button data-tab="relatorios" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Relatórios</button>
+
      </div>
 
       <section id="content-projetos" class="p-6 hidden space-y-6">
@@ -137,9 +140,7 @@
             <h2 class="text-2xl md:text-3xl font-semibold text-blue-900">Áreas Cadastradas (Operador)</h2>
           </div>
           <div class="flex gap-2">
-            <button id="btnDesbloquear" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-              Admin
-            </button>
+
             <button id="btnExportCSV" class="bg-emerald-600 text-white px-3 py-2 rounded hover:bg-emerald-700 text-sm">Exportar CSV (dia)</button>
             <button id="btnExportPDF" class="bg-indigo-600 text-white px-3 py-2 rounded hover:bg-indigo-700 text-sm">Exportar PDF (dia)</button>
           </div>
@@ -1090,6 +1091,7 @@ async function carregarParaEdicao(id) {
         totalPar += horasParadas;
 
         linhas.push({
+          projeto: area.numeroCroqui || "",
           projeto: area.projeto || "",
           bloco: area.bloco || "",
           bombeamento: area.bombeamento || "",
@@ -1136,10 +1138,11 @@ async function carregarParaEdicao(id) {
       // Tabela HTML simples (além do PDF/CSV)
       const table = document.createElement("div");
       table.className = "overflow-auto";
-      const headers = ["Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","Horas Planejadas","Horas Paradas","Horas Rodadas","Eficiência"];
+      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","Horas Planejadas","Horas Paradas","Horas Rodadas","Eficiência"];
       const thead = `<thead><tr>${headers.map(h=>`<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
       const tbody = `<tbody>${linhas.map(l=>`
         <tr class="hover:bg-gray-50">
+          <td class="px-3 py-2 text-sm">${l.numeroCroqui}</td>
           <td class="px-3 py-2 text-sm">${l.projeto}</td>
           <td class="px-3 py-2 text-sm">${l.bloco}</td>
           <td class="px-3 py-2 text-sm">${l.bombeamento}</td>
