@@ -31,13 +31,13 @@
     
 
     <div class="flex border-b flex-wrap">
-        <button data-tab="projetos" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Projetos</button>
+         <button data-tab="projetos" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Projetos</button>
 
-        <button data-tab="cadastro" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Cadastro de Áreas</button>
+         <button data-tab="cadastro" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Cadastro de Áreas</button>
 
-        <button data-tab="operador" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600">Áreas Cadastradas</button>
+         <button data-tab="operador" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600">Áreas Cadastradas</button>
 
-        <button data-tab="relatorios" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Relatórios</button>
+         <button data-tab="relatorios" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Relatórios</button>
 
      </div>
 
@@ -101,12 +101,10 @@
               <label for="horasPlanejadas" class="block text-sm font-semibold mb-1">Horas Planejadas (dia)</label>
               <input id="horasPlanejadas" type="number" min="0" max="24" step="0.25" required class="w-full border rounded px-3 py-2" placeholder="Ex: 24" />
             </div>
-            <!-- NOVO CAMPO -->
             <div>
               <label for="velocidadeCarretel" class="block text-sm font-semibold mb-1">Velocidade do Carretel (m/h)</label>
               <input id="velocidadeCarretel" type="number" min="0" step="0.1" required class="w-full border rounded px-3 py-2" placeholder="Ex: 15.5" />
             </div>
-            <!-- NOVO CAMPO CALCULADO -->
             <div>
               <label for="metrosLineares" class="block text-sm font-semibold mb-1">Metros Lineares (m)</label>
               <input id="metrosLineares" readonly class="w-full border rounded px-3 py-2 bg-gray-200" placeholder="Calculado" />
@@ -203,7 +201,7 @@
           </div>
         </div>
 
-        <div id="sumarioRel" class="grid grid-cols-2 md:grid-cols-5 gap-4 mt-2">
+        <div id="sumarioRel" class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
           <div class="bg-blue-50 border border-blue-200 p-3 rounded">
             <div class="text-xs text-blue-700">Horas Planejadas</div>
             <div id="sumPlanejadas" class="text-xl font-semibold text-blue-900">0</div>
@@ -220,8 +218,7 @@
             <div class="text-xs text-purple-700">Eficiência</div>
             <div id="sumEficiencia" class="text-xl font-semibold text-purple-900">0%</div>
           </div>
-          <!-- NOVO CARD -->
-          <div class="bg-teal-50 border border-teal-200 p-3 rounded col-span-2 md:col-span-1">
+          <div class="bg-teal-50 border border-teal-200 p-3 rounded">
             <div class="text-xs text-teal-700">Área Irrigada (Metros Lineares)</div>
             <div class="text-base font-semibold text-teal-900">
                 Plano: <span id="sumMetrosPlano">0</span> m
@@ -230,20 +227,75 @@
                 Real: <span id="sumMetrosReal">0</span> m
             </div>
           </div>
+          <div class="bg-cyan-50 border border-cyan-200 p-3 rounded">
+            <div class="text-xs text-cyan-700">Área Irrigada (Horímetro)</div>
+            <div class="text-base font-semibold text-cyan-900">
+                Plano: <span id="sumMetrosPlanoHorimetro">0</span> m
+            </div>
+            <div class="text-base font-semibold text-cyan-900">
+                Real: <span id="sumMetrosRealHorimetro">0</span> m
+            </div>
+          </div>
         </div>
 
         <div id="tabelaRel" class="space-y-3 mt-4"></div>
+
+        <hr class="border-gray-200 my-8" />
+
+        <h3 class="text-xl md:text-2xl font-semibold text-blue-900">Relatório por Área</h3>
+        <p class="text-sm text-gray-600">Gere um relatório detalhado para uma área específica.</p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block mb-1 font-semibold" for="filtroAreaIndividual">Selecionar Área</label>
+            <select id="filtroAreaIndividual" class="w-full border rounded px-3 py-2">
+              <option value="">-- Selecione uma Área --</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button id="btnGerarRelatorioIndividual" class="w-full md:w-auto bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Gerar Relatório Individual</button>
+          </div>
+        </div>
+
+        <div id="sumarioRelIndividual" class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
+            <div class="bg-blue-50 border border-blue-200 p-3 rounded">
+              <div class="text-xs text-blue-700">Horas Planejadas</div>
+              <div id="sumPlanejadasInd" class="text-xl font-semibold text-blue-900">0</div>
+            </div>
+            <div class="bg-amber-50 border border-amber-200 p-3 rounded">
+              <div class="text-xs text-amber-700">Horas Paradas</div>
+              <div id="sumParadasInd" class="text-xl font-semibold text-amber-900">0</div>
+            </div>
+            <div class="bg-emerald-50 border border-emerald-200 p-3 rounded">
+              <div class="text-xs text-emerald-700">Horas Rodadas</div>
+              <div id="sumRodadasInd" class="text-xl font-semibold text-emerald-900">0</div>
+            </div>
+            <div class="bg-purple-50 border border-purple-200 p-3 rounded">
+              <div class="text-xs text-purple-700">Eficiência</div>
+              <div id="sumEficienciaInd" class="text-xl font-semibold text-purple-900">0%</div>
+            </div>
+            <div class="bg-teal-50 border border-teal-200 p-3 rounded col-span-2">
+                <div class="text-xs text-teal-700">Área Irrigada (Metros Lineares)</div>
+                <div class="text-base font-semibold text-teal-900">
+                    Plano: <span id="sumMetrosPlanoInd">0</span> m
+                </div>
+                <div class="text-base font-semibold text-teal-900">
+                    Real: <span id="sumMetrosRealInd">0</span> m
+                </div>
+            </div>
+        </div>
+        <div id="tabelaRelIndividual" class="space-y-3 mt-4"></div>
+
       </section>
     </div>
   </main>
 
 
 
-  <!-- Modal: Registrar Parada -->
   <div id="modalParada" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-40">
     <div class="bg-white w-full max-w-xl rounded-lg shadow-lg p-6 relative max-h-[90vh] overflow-y-auto">
       <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
-      <h3 class="text-xl font-semibold mb-4">Registrar Parada</h3>
+      <h3 id="modalTitle" class="text-xl font-semibold mb-4">Registrar Parada</h3>
 
       <div id="modalInfoArea" class="text-sm text-gray-700 mb-4"></div>
 
@@ -285,18 +337,15 @@
             <input id="equipamentoProblemaModal" type="text" class="w-full border rounded px-3 py-2" placeholder="Ex: EB-05 ou Rede 3" />
           </div>
 
-          <!-- CÓDIGOS DE PARADA (RESTAURADO) -->
           <div>
             <label class="block text-sm font-semibold">Descrição da Parada (código)</label>
             <select id="descricaoParadaCodigoSelect" class="w-full border rounded px-3 py-2" required></select>
           </div>
 
-          <!-- NOVA SELEÇÃO DE PROBLEMAS -->
           <div>
             <label class="block text-sm font-semibold">Descrição do Problema (selecione um ou mais)</label>
             <div id="listaProblemas" class="max-h-48 overflow-y-auto border rounded p-2 space-y-1 mt-1">
-              <!-- Checkboxes serão gerados aqui pelo JS -->
-            </div>
+              </div>
             <div class="mt-2">
                 <label class="inline-flex items-center cursor-pointer">
                     <input type="checkbox" id="problemaOutro" class="form-checkbox">
@@ -323,7 +372,7 @@
 
         <div class="flex justify-end gap-3 pt-2">
           <button type="button" id="cancelarParada" class="bg-gray-200 px-4 py-2 rounded hover:bg-gray-300">Cancelar</button>
-          <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Salvar</button>
+          <button type="submit" id="submitParadaBtn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">Salvar</button>
         </div>
       </form>
 
@@ -336,7 +385,6 @@
     </div>
   </div>
 
-<!-- ===== APP JS (CORRIGIDO + OFFLINE INDEXEDDB MULTI-ABA + RELATÓRIOS) ===== -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js";
   import {
@@ -422,7 +470,17 @@
       const off = d.getTimezoneOffset(); d.setMinutes(d.getMinutes() - off);
       return d.toISOString().slice(0,10);
     }
-    function toISOFromDatetimeLocal(v) { return new Date(v).toISOString(); }
+    function toISOFromDatetimeLocal(v) {
+        if (!v) return null;
+        const d = new Date(v);
+        return d.toISOString();
+    }
+    function fromISOToDatetimeLocal(iso) {
+        if (!iso) return "";
+        const d = new Date(iso);
+        d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
+        return d.toISOString().slice(0, 16);
+    }
     function formatDateTime(d) { try { return new Date(d).toLocaleString("pt-BR"); } catch { return "-"; } }
 
     function updateConnUI() {
@@ -453,7 +511,9 @@
     const listaAreasOperador = $("#listaAreasOperador");
     const filtroDataOperador = $("#filtroDataOperador");
     const filtroDataRel = $("#filtroDataRel");
-
+    // NOVO
+    const filtroAreaIndividual = $("#filtroAreaIndividual");
+    
     const tabBtns = $$(".tab-btn");
 
     function switchTab(name){
@@ -600,6 +660,10 @@
                 isSyncing = false;
                 syncNotificationShown = true;
             }
+            // NOVO: Coleta de áreas para o filtro de relatório individual
+            const areasData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            popularFiltroAreaIndividual(areasData);
+            
             if (!sections.cadastro.classList.contains("hidden")) {
                 listarAreasCadastro(snapshot);
             }
@@ -854,6 +918,7 @@ async function carregarParaEdicao(id) {
     const duracaoParadaEl = $("#duracaoParada");
     const overlapAlert = $("#alertOverlap");
     let areaAtual = null;
+    let editParadaId = null; // NOVO: para controlar edição de parada
 
     formParada.querySelectorAll('input[name="houveParadaModal"]').forEach(r => {
       r.addEventListener("change", (ev) => {
@@ -882,8 +947,13 @@ async function carregarParaEdicao(id) {
         descricaoProblemaOutroTextarea.classList.toggle('hidden', !problemaOutroCheckbox.checked);
     });
 
-    function abrirModal(areaDoc) {
+    function abrirModal(areaDoc, paradaParaEditar = null) {
       areaAtual = areaDoc;
+      editParadaId = paradaParaEditar ? paradaParaEditar.id : null;
+
+      $("#modalTitle").textContent = editParadaId ? "Editar Parada" : "Registrar Parada";
+      $("#submitParadaBtn").textContent = editParadaId ? "Salvar Alterações" : "Salvar";
+
       $("#modalInfoArea").innerHTML = `
         <div><strong>Projeto:</strong> ${areaDoc.projeto || "-"}</div>
         <div><strong>Bloco:</strong> ${areaDoc.bloco || "-"}</div>
@@ -896,15 +966,49 @@ async function carregarParaEdicao(id) {
       duracaoParadaEl.textContent = "-"; 
       overlapAlert.classList.add("hidden");
       
-      const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-      const in30 = new Date(now); in30.setMinutes(in30.getMinutes() + 30);
-      $("#inicioParada").value = now.toISOString().slice(0,16);
-      $("#fimParada").value = in30.toISOString().slice(0,16);
+      if (paradaParaEditar) {
+          const p = paradaParaEditar;
+          $('input[name="houveParadaModal"][value="sim"]').checked = true;
+          camposParada.classList.remove("hidden");
+          $("#codParada").value = p.codParada || "";
+          $("#horimetroInicial").value = p.horimetroInicial || "";
+          $("#horimetroFinal").value = p.horimetroFinal || "";
+          $("#equipamentoProblemaModal").value = p.equipamentoProblema || "";
+          $("#descricaoParadaCodigoSelect").value = p.descricaoParadaCodigo || "";
+          
+          $$('input[name="problema"]').forEach(cb => cb.checked = false);
+          if (Array.isArray(p.descricaoProblema)) {
+              p.descricaoProblema.forEach(prob => {
+                  const cb = $(`input[name="problema"][value="${prob}"]`);
+                  if (cb) cb.checked = true;
+              });
+          }
+          
+          if (p.descricaoProblemaOutro) {
+              problemaOutroCheckbox.checked = true;
+              descricaoProblemaOutroTextarea.value = p.descricaoProblemaOutro;
+              descricaoProblemaOutroTextarea.classList.remove('hidden');
+          }
+
+          $("#inicioParada").value = fromISOToDatetimeLocal(p.inicioParada);
+          $("#fimParada").value = fromISOToDatetimeLocal(p.fimParada);
+          calcularDuracaoModal();
+      } else {
+          const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+          const in30 = new Date(now); in30.setMinutes(in30.getMinutes() + 30);
+          $("#inicioParada").value = now.toISOString().slice(0,16);
+          $("#fimParada").value = in30.toISOString().slice(0,16);
+      }
 
       modalParada.classList.remove("hidden"); modalParada.classList.add("flex");
       carregarHistoricoParadas(areaDoc.id, filtroDataOperador.value);
     }
-    function fecharModal(){ modalParada.classList.add("hidden"); modalParada.classList.remove("flex"); areaAtual = null; }
+    function fecharModal(){ 
+        modalParada.classList.add("hidden"); 
+        modalParada.classList.remove("flex"); 
+        areaAtual = null; 
+        editParadaId = null;
+    }
     closeModalBtn.addEventListener("click", fecharModal);
     cancelarParadaBtn.addEventListener("click", fecharModal);
     modalParada.addEventListener("click", (e) => { if (e.target === modalParada) fecharModal(); });
@@ -919,48 +1023,91 @@ async function carregarParaEdicao(id) {
         const qy = query(ref, where("inicioParada", ">=", `${ymd}T00:00:00`), where("inicioParada", "<=", `${ymd}T23:59:59`), orderBy("inicioParada", "asc"));
         const snap = await getDocs(qy);
         if (snap.empty) { cont.innerHTML = `<div class="text-gray-600 text-sm">Sem registros para o dia.</div>`; return []; }
-        const itens = [];
-        const frag = document.createDocumentFragment();
-       snap.forEach(s => {
-        const p = s.data();
-        itens.push({ id: s.id, ...p });
-        const linha = document.createElement("div");
-        const durh = p.duracaoHoras != null ? Number(p.duracaoHoras).toFixed(2) : "-";
         
-        const descricoes = Array.isArray(p.descricaoProblema) && p.descricaoProblema.length > 0
-            ? p.descricaoProblema.join(', ')
-            : "N/A";
+        const itens = [];
+        snap.forEach(s => itens.push({ id: s.id, ...s.data() }));
 
-        let problemaHTML = `<div><strong>Cód. Parada:</strong> ${p.descricaoParadaCodigo || "-"}</div>`;
-        problemaHTML += `<div><strong>Problema(s):</strong> ${descricoes}</div>`;
-
-        if (p.descricaoProblemaOutro) {
-            problemaHTML += `<div><strong>Outro:</strong> ${p.descricaoProblemaOutro}</div>`;
-        }
-
-        linha.className = "border rounded p-2";
-        linha.innerHTML = `
-          <div><strong>Houve:</strong> ${p.houveParada ? "Sim" : "Não"}</div>
-          ${p.houveParada ? `
-            <div><strong>Equip.:</strong> ${p.codParada || "-"} ${p.equipamentoProblema ? "• " + p.equipamentoProblema : ""}</div>
-            ${problemaHTML}
-            <div><strong>Início:</strong> ${formatDateTime(p.inicioParada)} • <strong>Fim:</strong> ${formatDateTime(p.fimParada)}</div>
-            <div><strong>Duração:</strong> ${durh} h</div>
+        const frag = document.createDocumentFragment();
+        itens.forEach(p => {
+            const linha = document.createElement("div");
+            const durh = p.duracaoHoras != null ? Number(p.duracaoHoras).toFixed(2) : "-";
             
-            <div><strong>Horímetro Inicial:</strong> ${p.horimetroInicial || "-"}</div>
-            <div><strong>Horímetro Final:</strong> ${p.horimetroFinal || "-"}</div>
-          ` : ``}
-          <div class="text-xs text-gray-500"><em>Registrado:</em> ${p.createdAt?.seconds ? new Date(p.createdAt.seconds*1000).toLocaleString("pt-BR") : "-"}</div>
-        `;
-        frag.appendChild(linha);
-      });
-        cont.innerHTML = ""; cont.appendChild(frag);
+            const descricoes = Array.isArray(p.descricaoProblema) && p.descricaoProblema.length > 0
+                ? p.descricaoProblema.join(', ')
+                : "N/A";
+
+            let problemaHTML = `<div><strong>Cód. Parada:</strong> ${p.descricaoParadaCodigo || "-"}</div>`;
+            problemaHTML += `<div><strong>Problema(s):</strong> ${descricoes}</div>`;
+
+            if (p.descricaoProblemaOutro) {
+                problemaHTML += `<div><strong>Outro:</strong> ${p.descricaoProblemaOutro}</div>`;
+            }
+
+            const adminButtons = isAdmin ? `
+                <div class="flex gap-2 mt-2">
+                    <button class="btnEditarParada text-xs bg-yellow-400 text-white px-2 py-1 rounded" data-parada-id="${p.id}">Editar</button>
+                    <button class="btnExcluirParada text-xs bg-red-500 text-white px-2 py-1 rounded" data-parada-id="${p.id}">Excluir</button>
+                </div>
+            ` : '';
+
+            linha.className = "border rounded p-2";
+            linha.innerHTML = `
+              <div><strong>Houve:</strong> ${p.houveParada ? "Sim" : "Não"}</div>
+              ${p.houveParada ? `
+                <div><strong>Equip.:</strong> ${p.codParada || "-"} ${p.equipamentoProblema ? "• " + p.equipamentoProblema : ""}</div>
+                ${problemaHTML}
+                <div><strong>Início:</strong> ${formatDateTime(p.inicioParada)} • <strong>Fim:</strong> ${formatDateTime(p.fimParada)}</div>
+                <div><strong>Duração:</strong> ${durh} h</div>
+                
+                <div><strong>Horímetro Inicial:</strong> ${p.horimetroInicial || "-"}</div>
+                <div><strong>Horímetro Final:</strong> ${p.horimetroFinal || "-"}</div>
+                ${adminButtons}
+              ` : ``}
+              <div class="text-xs text-gray-500"><em>Registrado:</em> ${p.createdAt?.seconds ? new Date(p.createdAt.seconds*1000).toLocaleString("pt-BR") : "-"}</div>
+            `;
+            frag.appendChild(linha);
+        });
+        cont.innerHTML = ""; 
+        cont.appendChild(frag);
+
+        cont.querySelectorAll('.btnEditarParada').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const paradaId = btn.dataset.paradaId;
+                const paradaData = itens.find(item => item.id === paradaId);
+                if (paradaData) {
+                    abrirModal(areaAtual, paradaData);
+                }
+            });
+        });
+
+        cont.querySelectorAll('.btnExcluirParada').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const paradaId = btn.dataset.paradaId;
+                excluirParada(areaId, paradaId);
+            });
+        });
+
         return itens;
       } catch (e) { console.error(e); cont.innerHTML = `<div class="text-red-600 text-sm">Erro ao carregar histórico.</div>`; return []; }
     }
-    function existeSobreposicao(registros, novoInicioIso, novoFimIso) {
+
+    async function excluirParada(areaId, paradaId) {
+        if (!confirm("Tem certeza que deseja excluir este registro de parada?")) return;
+        try {
+            const paradaRef = doc(db, COLLECTION, areaId, "paradas", paradaId);
+            await deleteDoc(paradaRef);
+            showMessage("Registro de parada excluído com sucesso.");
+            carregarHistoricoParadas(areaId, filtroDataOperador.value);
+        } catch (e) {
+            console.error("Erro ao excluir parada:", e);
+            showMessage("Erro ao excluir o registro.", "error");
+        }
+    }
+
+    function existeSobreposicao(registros, novoInicioIso, novoFimIso, idSendoEditado) {
       const ni = new Date(novoInicioIso).getTime(); const nf = new Date(novoFimIso).getTime();
       return registros.some(r => {
+        if (r.id === idSendoEditado) return false; // Não comparar com ele mesmo
         if (!r.houveParada) return false;
         const ri = new Date(r.inicioParada).getTime(); const rf = new Date(r.fimParada).getTime();
         return ni < rf && nf > ri;
@@ -988,8 +1135,12 @@ async function carregarParaEdicao(id) {
 
         const inicioIso = toISOFromDatetimeLocal(inicio); const fimIso = toISOFromDatetimeLocal(fim);
         const historico = await carregarHistoricoParadas(areaAtual.id, $("#filtroDataOperador").value);
-        if (existeSobreposicao(historico, inicioIso, fimIso)) { overlapAlert.classList.remove("hidden"); return; }
-        else { overlapAlert.classList.add("hidden"); }
+        if (existeSobreposicao(historico, inicioIso, fimIso, editParadaId)) { 
+            overlapAlert.classList.remove("hidden"); 
+            return; 
+        } else { 
+            overlapAlert.classList.add("hidden"); 
+        }
         const durHoras = (df - di) / 3600000;
         payload = { 
             ...payload, 
@@ -1006,18 +1157,19 @@ async function carregarParaEdicao(id) {
         };
       }
       try {
-        const subRef = collection(doc(db, COLLECTION, areaAtual.id), "paradas");
-        await addDoc(subRef, payload);
-        showMessage("Parada registrada com sucesso!"); // MENSAGEM DE SUCESSO
-        await carregarHistoricoParadas(areaAtual.id, $("#filtroDataOperador").value);
-        // Limpa o formulário após o sucesso, exceto se o usuário for registrar outra parada
-        formParada.reset();
-        descricaoProblemaOutroTextarea.value = '';
-        descricaoProblemaOutroTextarea.classList.add('hidden');
-        camposParada.classList.add("hidden");
-        $('input[name="houveParadaModal"][value="nao"]').checked = true;
+        if (editParadaId) {
+            const paradaRef = doc(db, COLLECTION, areaAtual.id, "paradas", editParadaId);
+            await updateDoc(paradaRef, payload);
+            showMessage("Parada atualizada com sucesso!");
+        } else {
+            const subRef = collection(doc(db, COLLECTION, areaAtual.id), "paradas");
+            await addDoc(subRef, payload);
+            showMessage("Parada registrada com sucesso!");
+        }
+        
+        fecharModal();
 
-      } catch (e) { console.error(e); showMessage("Erro ao registrar parada.", "error"); }
+      } catch (e) { console.error(e); showMessage("Erro ao salvar parada.", "error"); }
     });
 
 
@@ -1069,37 +1221,50 @@ async function carregarParaEdicao(id) {
         );
 
         const paradasSnap = await getDocs(qy);
-        paradasSnap.forEach(p => {
-          const dados = p.data();
-          
-          all.push({
-            projeto: area.projeto || "",
-            bloco: area.bloco || "",
-            bombeamento: area.bombeamento || "",
-            numeroEletrobomba: area.numeroEletrobomba || "",
-            numeroCarretel: area.numeroCarretel || "",
-            velocidadeCarretel: area.velocidadeCarretel || "", // NOVO
-            metrosLineares: area.metrosLineares || "", // NOVO
-            vazao: area.vazao || "",
-            tipoArea: area.tipoArea || "",
-            tipoIrrigacao: area.tipoIrrigacao || "",
-            tipoProduto: area.tipoProduto || "",
-            horasPlanejadas: Number(area.horasPlanejadas||0).toFixed(2),
-            numeroCroqui: area.numeroCroqui || "",
-            proxBloco: area.proxBloco || "",
-            houveParada: dados.houveParada ? "Sim" : "Não",
-            codParada: dados.codParada || "",
-            equipamentoProblema: dados.equipamentoProblema || "",
-            descricaoParadaCodigo: dados.descricaoParadaCodigo || "",
-            descricaoProblema: (Array.isArray(dados.descricaoProblema) ? dados.descricaoProblema.join('; ') : '') + (dados.descricaoProblemaOutro ? '; Outro: ' + dados.descricaoProblemaOutro : ''),
-            inicioParada: formatDateTime(dados.inicioParada),
-            fimParada: formatDateTime(dados.fimParada),
-            duracaoHoras: dados.duracaoHoras != null ? Number(dados.duracaoHoras).toFixed(2) : "",
-            registradoEm: dados.createdAt?.seconds
-              ? new Date(dados.createdAt.seconds * 1000).toLocaleString("pt-BR")
-              : ""
-          });
-        });
+        if (paradasSnap.empty) {
+            all.push({
+                projeto: area.projeto || "",
+                bloco: area.bloco || "",
+                bombeamento: area.bombeamento || "",
+                numeroEletrobomba: area.numeroEletrobomba || "",
+                numeroCarretel: area.numeroCarretel || "",
+                descricaoCompletaParada: "Não houve parada",
+                //... outros campos da área
+            });
+        } else {
+            paradasSnap.forEach(p => {
+              const dados = p.data();
+              const descricaoProblemas = (Array.isArray(dados.descricaoProblema) ? dados.descricaoProblema.join('; ') : '');
+              const descricaoOutro = dados.descricaoProblemaOutro ? `; Outro: ${dados.descricaoProblemaOutro}` : '';
+              const descricaoCompleta = dados.houveParada 
+                ? `${dados.descricaoParadaCodigo || ''} (${descricaoProblemas}${descricaoOutro})`
+                : "Não houve parada";
+              
+              all.push({
+                projeto: area.projeto || "",
+                bloco: area.bloco || "",
+                bombeamento: area.bombeamento || "",
+                numeroEletrobomba: area.numeroEletrobomba || "",
+                numeroCarretel: area.numeroCarretel || "",
+                velocidadeCarretel: area.velocidadeCarretel || "",
+                metrosLineares: area.metrosLineares || "",
+                vazao: area.vazao || "",
+                tipoArea: area.tipoArea || "",
+                tipoIrrigacao: area.tipoIrrigacao || "",
+                tipoProduto: area.tipoProduto || "",
+                horasPlanejadas: Number(area.horasPlanejadas||0).toFixed(2),
+                numeroCroqui: area.numeroCroqui || "",
+                proxBloco: area.proxBloco || "",
+                descricaoCompletaParada: descricaoCompleta,
+                inicioParada: formatDateTime(dados.inicioParada),
+                fimParada: formatDateTime(dados.fimParada),
+                duracaoHoras: dados.duracaoHoras != null ? Number(dados.duracaoHoras).toFixed(2) : "",
+                registradoEm: dados.createdAt?.seconds
+                  ? new Date(dados.createdAt.seconds * 1000).toLocaleString("pt-BR")
+                  : ""
+              });
+            });
+        }
       }
       return all;
     }
@@ -1151,7 +1316,7 @@ async function carregarParaEdicao(id) {
       doc.save(`${titulo.replaceAll(" ","_").toLowerCase()}_${ymd}.pdf`);
     }
 
-    // ===== RELATÓRIOS =====
+    // ===== RELATÓRIOS CONSOLIDADOS =====
     $("#btnGerarRelatorio").addEventListener("click", gerarRelatoriosUI);
     $("#btnExportCSVRel").addEventListener("click", async () => {
       const { ymd, linhas } = await calcularRelatorio();
@@ -1177,7 +1342,7 @@ async function carregarParaEdicao(id) {
         .filter(a=> !filtroProj || a.projeto === filtroProj);
 
       const linhas = [];
-      let totalPlan = 0, totalPar = 0, totalMetrosPlano = 0, totalMetrosReal = 0;
+      let totalPlan = 0, totalPar = 0, totalMetrosPlano = 0, totalMetrosReal = 0, totalMetrosRealHorimetro = 0;
 
       for (const area of areas){
         const ref = collection(doc(db, COLLECTION, area.id), "paradas");
@@ -1187,9 +1352,13 @@ async function carregarParaEdicao(id) {
         );
         const snap = await getDocs(qy);
         let horasParadas = 0;
+        let horasHorimetro = 0;
         snap.forEach(s=>{
           const p = s.data();
           if (p.houveParada && p.duracaoHoras) horasParadas += Number(p.duracaoHoras)||0;
+          if (p.horimetroFinal && p.horimetroInicial) {
+              horasHorimetro += (Number(p.horimetroFinal) - Number(p.horimetroInicial));
+          }
         });
 
         const planejadas = Number(area.horasPlanejadas||0);
@@ -1199,11 +1368,13 @@ async function carregarParaEdicao(id) {
         const velocidade = Number(area.velocidadeCarretel || 0);
         const metrosPlano = Number(area.metrosLineares || 0);
         const metrosReal = rodadas * velocidade;
+        const metrosRealHorimetro = horasHorimetro * velocidade;
 
         totalPlan += planejadas;
         totalPar += horasParadas;
         totalMetrosPlano += metrosPlano;
         totalMetrosReal += metrosReal;
+        totalMetrosRealHorimetro += metrosRealHorimetro;
 
         linhas.push({
           numeroCroqui: area.numeroCroqui || "",
@@ -1216,8 +1387,9 @@ async function carregarParaEdicao(id) {
           horasParadas: horasParadas.toFixed(2),
           horasRodadas: rodadas.toFixed(2),
           eficiencia: `${efic.toFixed(1)}%`,
-          metrosLinearesPlano: metrosPlano.toFixed(2), // NOVO
-          metrosLinearesReal: metrosReal.toFixed(2), // NOVO
+          metrosLinearesPlano: metrosPlano.toFixed(2),
+          metrosLinearesReal: metrosReal.toFixed(2),
+          metrosLinearesRealHorimetro: metrosRealHorimetro.toFixed(2),
         });
       }
 
@@ -1226,7 +1398,7 @@ async function carregarParaEdicao(id) {
 
       return {
         ymd,
-        sum: { totalPlan, totalPar, rodadasTot, eficTot, totalMetrosPlano, totalMetrosReal },
+        sum: { totalPlan, totalPar, rodadasTot, eficTot, totalMetrosPlano, totalMetrosReal, totalMetrosRealHorimetro },
         linhas
       };
     }
@@ -1236,8 +1408,10 @@ async function carregarParaEdicao(id) {
       const sumPar = $("#sumParadas");
       const sumRod = $("#sumRodadas");
       const sumEf = $("#sumEficiencia");
-      const sumMetrosPlanoEl = $("#sumMetrosPlano"); // NOVO
-      const sumMetrosRealEl = $("#sumMetrosReal"); // NOVO
+      const sumMetrosPlanoEl = $("#sumMetrosPlano");
+      const sumMetrosRealEl = $("#sumMetrosReal");
+      const sumMetrosPlanoHorimetroEl = $("#sumMetrosPlanoHorimetro");
+      const sumMetrosRealHorimetroEl = $("#sumMetrosRealHorimetro");
       const tabelaRel = $("#tabelaRel");
 
       tabelaRel.innerHTML = `<div class="text-sm text-gray-600">Calculando...</div>`;
@@ -1247,8 +1421,10 @@ async function carregarParaEdicao(id) {
       sumPar.textContent = sum.totalPar.toFixed(2);
       sumRod.textContent = sum.rodadasTot.toFixed(2);
       sumEf.textContent = `${sum.eficTot.toFixed(1)}%`;
-      sumMetrosPlanoEl.textContent = sum.totalMetrosPlano.toFixed(2); // NOVO
-      sumMetrosRealEl.textContent = sum.totalMetrosReal.toFixed(2); // NOVO
+      sumMetrosPlanoEl.textContent = sum.totalMetrosPlano.toFixed(2);
+      sumMetrosRealEl.textContent = sum.totalMetrosReal.toFixed(2);
+      sumMetrosPlanoHorimetroEl.textContent = sum.totalMetrosPlano.toFixed(2); // Plano é o mesmo
+      sumMetrosRealHorimetroEl.textContent = sum.totalMetrosRealHorimetro.toFixed(2);
 
       if (!linhas.length){
         tabelaRel.innerHTML = `<div class="text-sm text-gray-600">Sem dados para os filtros.</div>`;
@@ -1257,7 +1433,7 @@ async function carregarParaEdicao(id) {
 
       const table = document.createElement("div");
       table.className = "overflow-auto";
-      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","Horas Planejadas","Horas Paradas","Horas Rodadas","Eficiência", "Metros Plano (m)", "Metros Real (m)"];
+      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","H. Plan","H. Par","H. Rod","Efic.", "ML Plan (m)", "ML Real (m)", "ML Real (Horim.)"];
       const thead = `<thead><tr>${headers.map(h=>`<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
       const tbody = `<tbody>${linhas.map(l=>`
         <tr class="hover:bg-gray-50">
@@ -1273,38 +1449,189 @@ async function carregarParaEdicao(id) {
           <td class="px-3 py-2 text-sm font-semibold">${l.eficiencia}</td>
           <td class="px-3 py-2 text-sm">${l.metrosLinearesPlano}</td>
           <td class="px-3 py-2 text-sm font-semibold text-teal-800">${l.metrosLinearesReal}</td>
+          <td class="px-3 py-2 text-sm font-semibold text-cyan-800">${l.metrosLinearesRealHorimetro}</td>
         </tr>
       `).join("")}</tbody>`;
       table.innerHTML = `<table class="min-w-full">${thead}${tbody}</table>`;
       tabelaRel.innerHTML = "";
       tabelaRel.appendChild(table);
     }
+    
+    // ===== NOVO CÓDIGO PARA RELATÓRIO INDIVIDUAL =====
+    async function popularFiltroAreaIndividual(areas) {
+        const select = $("#filtroAreaIndividual");
+        select.innerHTML = `<option value="">-- Selecione uma Área --</option>`;
+        const areasAtivas = areas.filter(a => a.finalizada !== true);
+        areasAtivas.sort((a, b) => (a.bloco || '').localeCompare(b.bloco || ''));
+        areasAtivas.forEach(area => {
+            const option = document.createElement('option');
+            option.value = area.id;
+            option.textContent = `${area.bloco} (${area.projeto})`;
+            select.appendChild(option);
+        });
+    }
+
+    $("#btnGerarRelatorioIndividual").addEventListener("click", gerarRelatorioIndividualUI);
+
+    async function gerarRelatorioIndividualUI() {
+        const areaId = $("#filtroAreaIndividual").value;
+        const ymd = $("#filtroDataRel").value || todayYMD();
+        const sumarioInd = $("#sumarioRelIndividual");
+        const tabelaInd = $("#tabelaRelIndividual");
+
+        if (!areaId) {
+            showMessage("Selecione uma área para gerar o relatório individual.", "error");
+            tabelaInd.innerHTML = '';
+            return;
+        }
+
+        tabelaInd.innerHTML = `<div class="text-sm text-gray-600">Calculando...</div>`;
+
+        const areaDoc = await getDoc(doc(db, COLLECTION, areaId));
+        if (!areaDoc.exists()) {
+            showMessage("Área não encontrada.", "error");
+            tabelaInd.innerHTML = '';
+            return;
+        }
+        const area = areaDoc.data();
+        
+        const ref = collection(doc(db, COLLECTION, areaId), "paradas");
+        const start = new Date(ymd + "T00:00:00.000Z");
+        const end = new Date(ymd + "T23:59:59.999Z");
+        const qy = query(ref, where("inicioParada", ">=", start.toISOString()), where("inicioParada", "<=", end.toISOString()), orderBy("inicioParada", "asc"));
+        const snap = await getDocs(qy);
+
+        let horasParadas = 0;
+        let horasHorimetro = 0;
+        const paradasTabela = [];
+
+        snap.forEach(s => {
+            const p = s.data();
+            if (p.houveParada && p.duracaoHoras) {
+                horasParadas += Number(p.duracaoHoras) || 0;
+                paradasTabela.push({
+                    houveParada: "Sim",
+                    tipoEquipamento: p.codParada,
+                    problema: (Array.isArray(p.descricaoProblema) ? p.descricaoProblema.join(', ') : '') + (p.descricaoProblemaOutro ? ` (Outro: ${p.descricaoProblemaOutro})` : ''),
+                    inicio: formatDateTime(p.inicioParada),
+                    fim: formatDateTime(p.fimParada),
+                    duracao: (Number(p.duracaoHoras) || 0).toFixed(2),
+                    horimetroInicial: p.horimetroInicial || "-",
+                    horimetroFinal: p.horimetroFinal || "-",
+                    descricaoCompleta: p.descricaoParadaCodigo || ""
+                });
+            } else {
+                paradasTabela.push({
+                    houveParada: "Não",
+                    tipoEquipamento: "-",
+                    problema: "-",
+                    inicio: "-",
+                    fim: "-",
+                    duracao: "-",
+                    horimetroInicial: "-",
+                    horimetroFinal: "-",
+                    descricaoCompleta: "Não houve parada"
+                });
+            }
+        });
+
+        if (snap.empty) {
+            paradasTabela.push({
+                houveParada: "Não",
+                tipoEquipamento: "-",
+                problema: "-",
+                inicio: "-",
+                fim: "-",
+                duracao: "-",
+                horimetroInicial: "-",
+                horimetroFinal: "-",
+                descricaoCompleta: "Não houve parada"
+            });
+        }
+        
+        const planejadas = Number(area.horasPlanejadas || 0);
+        const rodadas = Math.max(0, planejadas - horasParadas);
+        const efic = planejadas > 0 ? (rodadas / planejadas) * 100 : 0;
+
+        const velocidade = Number(area.velocidadeCarretel || 0);
+        const metrosPlano = Number(area.metrosLineares || 0);
+        const metrosReal = rodadas * velocidade;
+
+        // Atualiza o sumário individual
+        $("#sumPlanejadasInd").textContent = planejadas.toFixed(2);
+        $("#sumParadasInd").textContent = horasParadas.toFixed(2);
+        $("#sumRodadasInd").textContent = rodadas.toFixed(2);
+        $("#sumEficienciaInd").textContent = `${efic.toFixed(1)}%`;
+        $("#sumMetrosPlanoInd").textContent = metrosPlano.toFixed(2);
+        $("#sumMetrosRealInd").textContent = metrosReal.toFixed(2);
+
+        // Gera a tabela de paradas
+        if (!paradasTabela.length) {
+            tabelaInd.innerHTML = `<div class="text-sm text-gray-600">Nenhum registro de parada para o dia.</div>`;
+            return;
+        }
+        const table = document.createElement("div");
+        table.className = "overflow-auto";
+        const headers = ["Houve?", "Tipo Equip.", "Problema", "Início", "Fim", "Duração (h)", "Horímetro Inicial", "Horímetro Final", "Descrição Completa"];
+        const thead = `<thead><tr>${headers.map(h => `<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
+        const tbody = `<tbody>${paradasTabela.map(p => `
+            <tr class="hover:bg-gray-50">
+                <td class="px-3 py-2 text-sm">${p.houveParada}</td>
+                <td class="px-3 py-2 text-sm">${p.tipoEquipamento}</td>
+                <td class="px-3 py-2 text-sm">${p.problema}</td>
+                <td class="px-3 py-2 text-sm">${p.inicio}</td>
+                <td class="px-3 py-2 text-sm">${p.fim}</td>
+                <td class="px-3 py-2 text-sm">${p.duracao}</td>
+                <td class="px-3 py-2 text-sm">${p.horimetroInicial}</td>
+                <td class="px-3 py-2 text-sm">${p.horimetroFinal}</td>
+                <td class="px-3 py-2 text-sm">${p.descricaoCompleta}</td>
+            </tr>
+        `).join("")}</tbody>`;
+        table.innerHTML = `<table class="min-w-full">${thead}${tbody}</table>`;
+        tabelaInd.innerHTML = "";
+        tabelaInd.appendChild(table);
+    }
+    
       // Defina a senha correta aqui
       const SENHA_SECRETA = 'usco123';
+      let isAdmin = false;
 
       function verificarSenha() {
-      // Solicita a senha ao usuário
-      const senhaDigitada = prompt("Digite a senha para desbloquear as abas:");
+          if (isAdmin) {
+              isAdmin = false;
+              $("#btnDesbloquear").textContent = "Admin";
+              $("#btnDesbloquear").classList.replace('bg-red-600', 'bg-blue-600');
+              showMessage("Acesso de administrador encerrado.", "sync");
+              // Atualizar a UI para remover botões de admin
+              if (!sections.operador.classList.contains("hidden")) {
+                  listarAreasOperador();
+              }
+              return;
+          }
+      
+          const senhaDigitada = prompt("Digite a senha para desbloquear as abas:");
 
-      // Verifica se a senha está correta
-      if (senhaDigitada === SENHA_SECRETA) {
-        liberarAbas();
-        showMessage("Acesso liberado! As abas estão desbloqueadas.", "success");
-       } else {
-        showMessage("Senha incorreta. Tente novamente.", "error");
-       }
-}
+          if (senhaDigitada === SENHA_SECRETA) {
+            isAdmin = true;
+            liberarAbas();
+            $("#btnDesbloquear").textContent = "Logout Admin";
+            $("#btnDesbloquear").classList.replace('bg-blue-600', 'bg-red-600');
+            showMessage("Acesso liberado! As abas estão desbloqueadas.", "success");
+            // Atualizar a UI para mostrar botões de admin
+            if (!sections.operador.classList.contains("hidden")) {
+                listarAreasOperador();
+            }
+           } else if (senhaDigitada) { // Evita mensagem de erro se o usuário cancelar o prompt
+            showMessage("Senha incorreta. Tente novamente.", "error");
+           }
+      }
       function liberarAbas() {
-      // Seleciona todos os botões que têm a classe 'aba-bloqueada'
-      const abasBloqueadas = document.querySelectorAll('.aba-bloqueada');
-    
-      // Remove a classe de cada botão
-      abasBloqueadas.forEach(aba => {
-        aba.classList.remove('aba-bloqueada');
-        // Opcional: Adiciona a classe de estilo hover de volta
-        aba.classList.add('hover:text-blue-600');
-    });
-}
+          const abasBloqueadas = document.querySelectorAll('.aba-bloqueada');
+          abasBloqueadas.forEach(aba => {
+            aba.classList.remove('aba-bloqueada');
+            aba.classList.add('hover:text-blue-600');
+        });
+    }
 
     // ===== Inicialização =====
     (function popularCodigosParada() {
