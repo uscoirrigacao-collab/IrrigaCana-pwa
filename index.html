@@ -39,7 +39,7 @@
 
          <button data-tab="relatorios" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Relatórios</button>
 
-     </div>
+    </div>
 
       <section id="content-projetos" class="p-6 hidden space-y-6">
         <h1 class="text-2xl md:text-3xl font-semibold text-blue-900">Projetos</h1>
@@ -201,39 +201,64 @@
           </div>
         </div>
 
-        <div id="sumarioRel" class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-          <div class="bg-blue-50 border border-blue-200 p-3 rounded">
-            <div class="text-xs text-blue-700">Horas Planejadas</div>
-            <div id="sumPlanejadas" class="text-xl font-semibold text-blue-900">0</div>
-          </div>
-          <div class="bg-amber-50 border border-amber-200 p-3 rounded">
-            <div class="text-xs text-amber-700">Horas Paradas</div>
-            <div id="sumParadas" class="text-xl font-semibold text-amber-900">0</div>
-          </div>
-          <div class="bg-emerald-50 border border-emerald-200 p-3 rounded">
-            <div class="text-xs text-emerald-700">Horas Rodadas</div>
-            <div id="sumRodadas" class="text-xl font-semibold text-emerald-900">0</div>
-          </div>
-          <div class="bg-purple-50 border border-purple-200 p-3 rounded">
-            <div class="text-xs text-purple-700">Eficiência</div>
-            <div id="sumEficiencia" class="text-xl font-semibold text-purple-900">0%</div>
-          </div>
-          <div class="bg-teal-50 border border-teal-200 p-3 rounded">
-            <div class="text-xs text-teal-700">Área Irrigada (Metros Lineares)</div>
-            <div class="text-base font-semibold text-teal-900">
-                Plano: <span id="sumMetrosPlano">0</span> m
-            </div>
-            <div class="text-base font-semibold text-teal-900">
-                Real: <span id="sumMetrosReal">0</span> m
+        <div id="sumarioRel" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
+          <div class="flex items-center space-x-3 bg-blue-50 border border-blue-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-blue-700 uppercase">Horas Planejadas</div>
+              <div id="sumPlanejadas" class="text-2xl font-bold text-blue-900">0</div>
             </div>
           </div>
-          <div class="bg-cyan-50 border border-cyan-200 p-3 rounded">
-            <div class="text-xs text-cyan-700">Área Irrigada (Horímetro)</div>
-            <div class="text-base font-semibold text-cyan-900">
-                Plano: <span id="sumMetrosPlanoHorimetro">0</span> m
+          <div class="flex items-center space-x-3 bg-amber-50 border border-amber-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-amber-700 uppercase">Horas Paradas</div>
+              <div id="sumParadas" class="text-2xl font-bold text-amber-900">0</div>
             </div>
-            <div class="text-base font-semibold text-cyan-900">
-                Real: <span id="sumMetrosRealHorimetro">0</span> m
+          </div>
+          <div class="flex items-center space-x-3 bg-emerald-50 border border-emerald-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.01 12.01 0 002.944 12c.032 4.418 2.378 8.42 6.114 10.153a1 1 0 001.077-.042A12.01 12.01 0 0012 21.056c4.418-.032 8.42-2.378 10.153-6.114a1 1 0 00-.042-1.077c-1.734-2.221-4.075-3.951-6.114-5.642z" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-emerald-700 uppercase">Horas Rodadas</div>
+              <div id="sumRodadas" class="text-2xl font-bold text-emerald-900">0</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3 bg-purple-50 border border-purple-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M4 8h16M4 16h16" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-purple-700 uppercase">Eficiência</div>
+              <div id="sumEficiencia" class="text-2xl font-bold text-purple-900">0%</div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3 bg-teal-50 border border-teal-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7.5l-2.165 2.165a1.583 1.583 0 00-2.243 0L10 17.25m6-4.5L10 17.25M7.5 4.5l-3 3m10.5 6L8.25 10.5M5.25 15.75l-1.5 1.5M10.5 4.5l-3 3" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-teal-700 uppercase">Metros Lineares (m)</div>
+              <div class="text-xl font-bold text-teal-900">
+                  Plano: <span id="sumMetrosPlano">0</span>
+              </div>
+              <div class="text-xl font-bold text-teal-900">
+                  Real: <span id="sumMetrosReal">0</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3 bg-green-50 border border-green-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-green-700 uppercase">Hectares Irrigados (ha)</div>
+              <div class="text-xl font-bold text-green-900">
+                  Plano: <span id="sumHectaresPlano">0</span>
+              </div>
+              <div class="text-xl font-bold text-green-900">
+                  Real: <span id="sumHectaresReal">0</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3 bg-cyan-50 border border-cyan-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-cyan-700 uppercase">Metros Lineares (Horímetro)</div>
+              <div id="sumMetrosHorimetro" class="text-2xl font-bold text-cyan-900">0</div>
             </div>
           </div>
         </div>
@@ -257,35 +282,68 @@
           </div>
         </div>
 
-        <div id="sumarioRelIndividual" class="grid grid-cols-2 md:grid-cols-3 gap-4 mt-2">
-            <div class="bg-blue-50 border border-blue-200 p-3 rounded">
-              <div class="text-xs text-blue-700">Horas Planejadas</div>
-              <div id="sumPlanejadasInd" class="text-xl font-semibold text-blue-900">0</div>
+        <div id="sumarioRelIndividual" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-2">
+          <div class="flex items-center space-x-3 bg-blue-50 border border-blue-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-blue-700 uppercase">Horas Planejadas</div>
+              <div id="sumPlanejadasInd" class="text-2xl font-bold text-blue-900">0</div>
             </div>
-            <div class="bg-amber-50 border border-amber-200 p-3 rounded">
-              <div class="text-xs text-amber-700">Horas Paradas</div>
-              <div id="sumParadasInd" class="text-xl font-semibold text-amber-900">0</div>
+          </div>
+          <div class="flex items-center space-x-3 bg-amber-50 border border-amber-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-amber-700 uppercase">Horas Paradas</div>
+              <div id="sumParadasInd" class="text-2xl font-bold text-amber-900">0</div>
             </div>
-            <div class="bg-emerald-50 border border-emerald-200 p-3 rounded">
-              <div class="text-xs text-emerald-700">Horas Rodadas</div>
-              <div id="sumRodadasInd" class="text-xl font-semibold text-emerald-900">0</div>
+          </div>
+          <div class="flex items-center space-x-3 bg-emerald-50 border border-emerald-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.01 12.01 0 002.944 12c.032 4.418 2.378 8.42 6.114 10.153a1 1 0 001.077-.042A12.01 12.01 0 0012 21.056c4.418-.032 8.42-2.378 10.153-6.114a1 1 0 00-.042-1.077c-1.734-2.221-4.075-3.951-6.114-5.642z" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-emerald-700 uppercase">Horas Rodadas</div>
+              <div id="sumRodadasInd" class="text-2xl font-bold text-emerald-900">0</div>
             </div>
-            <div class="bg-purple-50 border border-purple-200 p-3 rounded">
-              <div class="text-xs text-purple-700">Eficiência</div>
-              <div id="sumEficienciaInd" class="text-xl font-semibold text-purple-900">0%</div>
+          </div>
+          <div class="flex items-center space-x-3 bg-purple-50 border border-purple-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-purple-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M4 8h16M4 16h16" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-purple-700 uppercase">Eficiência</div>
+              <div id="sumEficienciaInd" class="text-2xl font-bold text-purple-900">0%</div>
             </div>
-            <div class="bg-teal-50 border border-teal-200 p-3 rounded col-span-2">
-                <div class="text-xs text-teal-700">Área Irrigada (Metros Lineares)</div>
-                <div class="text-base font-semibold text-teal-900">
-                    Plano: <span id="sumMetrosPlanoInd">0</span> m
-                </div>
-                <div class="text-base font-semibold text-teal-900">
-                    Real: <span id="sumMetrosRealInd">0</span> m
-                </div>
+          </div>
+          <div class="flex items-center space-x-3 bg-teal-50 border border-teal-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-teal-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 10l-2 1m0 0l-2-1m2 1v2.5M20 7.5l-2.165 2.165a1.583 1.583 0 00-2.243 0L10 17.25m6-4.5L10 17.25M7.5 4.5l-3 3m10.5 6L8.25 10.5M5.25 15.75l-1.5 1.5M10.5 4.5l-3 3" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-teal-700 uppercase">Metros Lineares (m)</div>
+              <div class="text-xl font-bold text-teal-900">
+                  Plano: <span id="sumMetrosPlanoInd">0</span>
+              </div>
+              <div class="text-xl font-bold text-teal-900">
+                  Real: <span id="sumMetrosRealInd">0</span>
+              </div>
             </div>
+          </div>
+          <div class="flex items-center space-x-3 bg-green-50 border border-green-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-green-700 uppercase">Hectares Irrigados (ha)</div>
+              <div class="text-xl font-bold text-green-900">
+                  Plano: <span id="sumHectaresPlanoInd">0</span>
+              </div>
+              <div class="text-xl font-bold text-green-900">
+                  Real: <span id="sumHectaresRealInd">0</span>
+              </div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-3 bg-cyan-50 border border-cyan-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-cyan-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-cyan-700 uppercase">Metros Lineares (Horímetro)</div>
+              <div id="sumMetrosHorimetroInd" class="text-2xl font-bold text-cyan-900">0</div>
+            </div>
+          </div>
         </div>
         <div id="tabelaRelIndividual" class="space-y-3 mt-4"></div>
-
       </section>
     </div>
   </main>
@@ -421,6 +479,7 @@
   // ===== Funções utilitárias =====
   const $ = sel => document.querySelector(sel);
   const $$ = sel => Array.from(document.querySelectorAll(sel));
+  const fatorCarreador = 0.006;
 
   function showMessage(text, type = "success") {
     const msgEl = $("#mensagem");
@@ -714,9 +773,9 @@
                 // Botões mudam com base no status da área
 const buttonsHTML = isFinalizada
   ? `<button class="btnReativar w-full bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" data-id="${docSnap.id}">Reativar Irrigação</button>
-     <button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>` // 
+      <button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>` // 
   : `<button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>
-     <button class="btnFinalizar bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" data-id="${docSnap.id}">Finalizar Irrigação</button>`;
+      <button class="btnFinalizar bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" data-id="${docSnap.id}">Finalizar Irrigação</button>`;
 
                 card.innerHTML = `
                   <div class="flex-1 flex flex-col gap-1 text-sm">
@@ -1342,7 +1401,8 @@ async function carregarParaEdicao(id) {
         .filter(a=> !filtroProj || a.projeto === filtroProj);
 
       const linhas = [];
-      let totalPlan = 0, totalPar = 0, totalMetrosPlano = 0, totalMetrosReal = 0, totalMetrosRealHorimetro = 0;
+      let totalPlan = 0, totalPar = 0, totalMetrosPlano = 0, totalMetrosReal = 0;
+      let totalHectaresPlano = 0, totalHectaresReal = 0, totalMetrosHorimetro = 0;
 
       for (const area of areas){
         const ref = collection(doc(db, COLLECTION, area.id), "paradas");
@@ -1357,7 +1417,7 @@ async function carregarParaEdicao(id) {
           const p = s.data();
           if (p.houveParada && p.duracaoHoras) horasParadas += Number(p.duracaoHoras)||0;
           if (p.horimetroFinal && p.horimetroInicial) {
-              horasHorimetro += (Number(p.horimetroFinal) - Number(p.horimetroInicial));
+              horasHorimetro += (Number(String(p.horimetroFinal).replace(',','.')) - Number(String(p.horimetroInicial).replace(',','.')));
           }
         });
 
@@ -1369,12 +1429,18 @@ async function carregarParaEdicao(id) {
         const metrosPlano = Number(area.metrosLineares || 0);
         const metrosReal = rodadas * velocidade;
         const metrosRealHorimetro = horasHorimetro * velocidade;
+        const hectaresPlano = metrosPlano * fatorCarreador;
+        const hectaresReal = metrosReal * fatorCarreador;
+
 
         totalPlan += planejadas;
         totalPar += horasParadas;
         totalMetrosPlano += metrosPlano;
         totalMetrosReal += metrosReal;
-        totalMetrosRealHorimetro += metrosRealHorimetro;
+        totalHectaresPlano += hectaresPlano;
+        totalHectaresReal += hectaresReal;
+        totalMetrosHorimetro += metrosRealHorimetro;
+
 
         linhas.push({
           numeroCroqui: area.numeroCroqui || "",
@@ -1389,7 +1455,8 @@ async function carregarParaEdicao(id) {
           eficiencia: `${efic.toFixed(1)}%`,
           metrosLinearesPlano: metrosPlano.toFixed(2),
           metrosLinearesReal: metrosReal.toFixed(2),
-          metrosLinearesRealHorimetro: metrosRealHorimetro.toFixed(2),
+          hectaresPlano: hectaresPlano.toFixed(2),
+          hectaresReal: hectaresReal.toFixed(2),
         });
       }
 
@@ -1398,7 +1465,12 @@ async function carregarParaEdicao(id) {
 
       return {
         ymd,
-        sum: { totalPlan, totalPar, rodadasTot, eficTot, totalMetrosPlano, totalMetrosReal, totalMetrosRealHorimetro },
+        sum: { 
+          totalPlan, totalPar, rodadasTot, eficTot, 
+          totalMetrosPlano, totalMetrosReal, 
+          totalHectaresPlano, totalHectaresReal,
+          totalMetrosHorimetro
+        },
         linhas
       };
     }
@@ -1410,8 +1482,9 @@ async function carregarParaEdicao(id) {
       const sumEf = $("#sumEficiencia");
       const sumMetrosPlanoEl = $("#sumMetrosPlano");
       const sumMetrosRealEl = $("#sumMetrosReal");
-      const sumMetrosPlanoHorimetroEl = $("#sumMetrosPlanoHorimetro");
-      const sumMetrosRealHorimetroEl = $("#sumMetrosRealHorimetro");
+      const sumHectaresPlanoEl = $("#sumHectaresPlano");
+      const sumHectaresRealEl = $("#sumHectaresReal");
+      const sumMetrosHorimetroEl = $("#sumMetrosHorimetro");
       const tabelaRel = $("#tabelaRel");
 
       tabelaRel.innerHTML = `<div class="text-sm text-gray-600">Calculando...</div>`;
@@ -1423,8 +1496,9 @@ async function carregarParaEdicao(id) {
       sumEf.textContent = `${sum.eficTot.toFixed(1)}%`;
       sumMetrosPlanoEl.textContent = sum.totalMetrosPlano.toFixed(2);
       sumMetrosRealEl.textContent = sum.totalMetrosReal.toFixed(2);
-      sumMetrosPlanoHorimetroEl.textContent = sum.totalMetrosPlano.toFixed(2); // Plano é o mesmo
-      sumMetrosRealHorimetroEl.textContent = sum.totalMetrosRealHorimetro.toFixed(2);
+      sumHectaresPlanoEl.textContent = sum.totalHectaresPlano.toFixed(2);
+      sumHectaresRealEl.textContent = sum.totalHectaresReal.toFixed(2);
+      sumMetrosHorimetroEl.textContent = sum.totalMetrosHorimetro.toFixed(2);
 
       if (!linhas.length){
         tabelaRel.innerHTML = `<div class="text-sm text-gray-600">Sem dados para os filtros.</div>`;
@@ -1433,7 +1507,7 @@ async function carregarParaEdicao(id) {
 
       const table = document.createElement("div");
       table.className = "overflow-auto";
-      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","H. Plan","H. Par","H. Rod","Efic.", "ML Plan (m)", "ML Real (m)", "ML Real (Horim.)"];
+      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","H. Plan","H. Par","H. Rod","Efic.", "ML Plan (m)", "ML Real (m)", "HA Plan (ha)", "HA Real (ha)"];
       const thead = `<thead><tr>${headers.map(h=>`<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
       const tbody = `<tbody>${linhas.map(l=>`
         <tr class="hover:bg-gray-50">
@@ -1449,7 +1523,8 @@ async function carregarParaEdicao(id) {
           <td class="px-3 py-2 text-sm font-semibold">${l.eficiencia}</td>
           <td class="px-3 py-2 text-sm">${l.metrosLinearesPlano}</td>
           <td class="px-3 py-2 text-sm font-semibold text-teal-800">${l.metrosLinearesReal}</td>
-          <td class="px-3 py-2 text-sm font-semibold text-cyan-800">${l.metrosLinearesRealHorimetro}</td>
+          <td class="px-3 py-2 text-sm font-semibold text-green-800">${l.hectaresPlano}</td>
+          <td class="px-3 py-2 text-sm font-semibold text-green-800">${l.hectaresReal}</td>
         </tr>
       `).join("")}</tbody>`;
       table.innerHTML = `<table class="min-w-full">${thead}${tbody}</table>`;
@@ -1509,6 +1584,11 @@ async function carregarParaEdicao(id) {
             const p = s.data();
             if (p.houveParada && p.duracaoHoras) {
                 horasParadas += Number(p.duracaoHoras) || 0;
+            }
+             if (p.horimetroFinal && p.horimetroInicial) {
+                horasHorimetro += (Number(String(p.horimetroFinal).replace(',','.')) - Number(String(p.horimetroInicial).replace(',','.')));
+            }
+            if(p.houveParada){
                 paradasTabela.push({
                     houveParada: "Sim",
                     tipoEquipamento: p.codParada,
@@ -1521,7 +1601,7 @@ async function carregarParaEdicao(id) {
                     descricaoCompleta: p.descricaoParadaCodigo || ""
                 });
             } else {
-                paradasTabela.push({
+                 paradasTabela.push({
                     houveParada: "Não",
                     tipoEquipamento: "-",
                     problema: "-",
@@ -1556,6 +1636,9 @@ async function carregarParaEdicao(id) {
         const velocidade = Number(area.velocidadeCarretel || 0);
         const metrosPlano = Number(area.metrosLineares || 0);
         const metrosReal = rodadas * velocidade;
+        const metrosRealHorimetro = horasHorimetro * velocidade;
+        const hectaresPlano = metrosPlano * fatorCarreador;
+        const hectaresReal = metrosReal * fatorCarreador;
 
         // Atualiza o sumário individual
         $("#sumPlanejadasInd").textContent = planejadas.toFixed(2);
@@ -1564,6 +1647,10 @@ async function carregarParaEdicao(id) {
         $("#sumEficienciaInd").textContent = `${efic.toFixed(1)}%`;
         $("#sumMetrosPlanoInd").textContent = metrosPlano.toFixed(2);
         $("#sumMetrosRealInd").textContent = metrosReal.toFixed(2);
+        $("#sumHectaresPlanoInd").textContent = hectaresPlano.toFixed(2);
+        $("#sumHectaresRealInd").textContent = hectaresReal.toFixed(2);
+        $("#sumMetrosHorimetroInd").textContent = metrosRealHorimetro.toFixed(2);
+
 
         // Gera a tabela de paradas
         if (!paradasTabela.length) {
