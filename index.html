@@ -9,7 +9,10 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
-  <style>.aba-bloqueada {opacity: 0.5;pointer-events: none;cursor: not-allowed;}</style>
+  <style>.tab-btn.active {border-color: #2563eb; /* Azul principal */color: #2563eb;font-weight: 600;}.tab-btn {
+   transition: all 0.2s ease-in-out;}.aba-bloqueada {opacity: 0.5;pointer-events: none;cursor: not-allowed;}
+</style>
+
 </head>
 
 
@@ -30,16 +33,44 @@
     </div>
     
 
-    <div class="flex border-b flex-wrap">
-         <button data-tab="projetos" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Projetos</button>
+<div class="border-b border-gray-200 mb-6">
+  <nav class="-mb-px flex space-x-6" aria-label="Tabs">
+    
+    <button data-tab="projetos"
+      class="tab-btn aba-bloqueada flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
+      </svg>
+      Projetos
+    </button>
 
-         <button data-tab="cadastro" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Cadastro de Áreas</button>
+    <button data-tab="cadastro"
+      class="tab-btn aba-bloqueada flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+      </svg>
+      Cadastro de Áreas
+    </button>
 
-         <button data-tab="operador" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600">Áreas Cadastradas</button>
+    <button data-tab="operador"
+      class="tab-btn flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+      </svg>
+      Áreas Cadastradas
+    </button>
 
-         <button data-tab="relatorios" class="tab-btn px-4 py-3 font-semibold text-gray-500 hover:text-blue-600 aba-bloqueada">Relatórios</button>
+    <button data-tab="relatorios"
+      class="tab-btn aba-bloqueada flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6h13v6H9zM3 7h18M3 17h18" />
+      </svg>
+      Relatórios
+    </button>
 
-    </div>
+  </nav>
+</div>
+
 
       <section id="content-projetos" class="p-6 hidden space-y-6">
         <h1 class="text-2xl md:text-3xl font-semibold text-blue-900">Projetos</h1>
@@ -87,15 +118,31 @@
             </div>
             <div>
               <label for="tipoArea" class="block text-sm font-semibold mb-1">Tipo de Área</label>
-              <input id="tipoArea" required class="w-full border rounded px-3 py-2" placeholder="Ex: Pré-plantio" />
+              <select id="tipoArea" required class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+              <option value="">-- Selecione --</option>
+              <option value="Moagem">Moagem</option>
+              <option value="Pré-plantio">Pré-plantio</option>
+              <option value="Plantio">Plantio</option>
+              <option value="Socaria">Socaria</option>
+              </select>
             </div>
             <div>
               <label for="tipoIrrigacao" class="block text-sm font-semibold mb-1">Tipo de Irrigação</label>
-              <input id="tipoIrrigacao" required class="w-full border rounded px-3 py-2" placeholder="Ex: Carretel" />
-            </div>
-            <div>
-              <label for="tipoProduto" class="block text-sm font-semibold mb-1">Produto</label>
-              <input id="tipoProduto" required class="w-full border rounded px-3 py-2" placeholder="Ex: Água" />
+               <select id="tipoIrrigacao" required class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+              <option value="">-- Selecione --</option>
+              <option value="Carretel">Carretel</option>
+              <option value="Pivo">Pivo</option>
+              <option value="Convencional">Convencional</option>
+              <option value="Pressurizada">Pressurizada</option>
+              </select>
+             </div>
+             <div>
+               <label for="tipoProduto" class="block text-sm font-semibold mb-1">Produto</label>
+               <select id="tipoProduto" required class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+               <option value="">-- Selecione --</option>
+               <option value="Água">Água</option>
+               <option value="Vinhaça">Vinhaça</option>
+               </select>
             </div>
             <div>
               <label for="horasPlanejadas" class="block text-sm font-semibold mb-1">Horas Planejadas (dia)</label>
@@ -575,16 +622,21 @@
     
     const tabBtns = $$(".tab-btn");
 
-    function switchTab(name){
-      Object.entries(sections).forEach(([k,sec])=>{
-        if (k === name) sec.classList.remove("hidden"); else sec.classList.add("hidden");
-      });
-      tabBtns.forEach(btn=>{
-        if (btn.dataset.tab === name) btn.classList.add("border-b-2","border-blue-600","text-blue-700");
-        else btn.classList.remove("border-b-2","border-blue-600","text-blue-700");
-      });
-      observarAreas(); 
+function switchTab(name) {
+  Object.entries(sections).forEach(([k, sec]) => {
+    if (k === name) sec.classList.remove("hidden");
+    else sec.classList.add("hidden");
+  });
+  tabBtns.forEach(btn => {
+    if (btn.dataset.tab === name) {
+      btn.classList.add("active");
+    } else {
+      btn.classList.remove("active");
     }
+  });
+  observarAreas();
+}
+
     tabBtns.forEach(btn => btn.addEventListener("click", ()=> switchTab(btn.dataset.tab)));
     
     let editDocId = null;
