@@ -136,8 +136,8 @@
               <input id="numeroEletrobomba" required class="w-full border rounded px-3 py-2" placeholder="Ex: 130001" />
             </div>
             <div>
-              <label for="numeroCarretel" class="block text-sm font-semibold mb-1">N° Carretel</label>
-              <input id="numeroCarretel" required class="w-full border rounded px-3 py-2" placeholder="Ex: 138001" />
+                <label for="quantidadeCarreteis" class="block text-sm font-semibold mb-1">Quantidade de Carretéis</label>
+                <input id="quantidadeCarreteis" type="number" min="1" required class="w-full border rounded px-3 py-2" placeholder="Ex: 2" />
             </div>
             <div>
               <label for="tipoArea" class="block text-sm font-semibold mb-1">Tipo de Área</label>
@@ -149,7 +149,9 @@
               <option value="Socaria">Socaria</option>
               </select>
             </div>
-            <div>
+            <div id="carreteisContainer" class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                </div>
+             <div>
               <label for="tipoIrrigacao" class="block text-sm font-semibold mb-1">Tipo de Irrigação</label>
                <select id="tipoIrrigacao" required class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
               <option value="">-- Selecione --</option>
@@ -472,6 +474,11 @@
                 </select>
               </div>
               
+              <div id="selecaoCarretelParada" class="hidden">
+                  <label class="block text-sm font-semibold">Selecione o Carretel</label>
+                  <select id="numeroCarretelParada" class="w-full border rounded px-3 py-2" required></select>
+              </div>
+
               <div>
                 <label for="horimetroInicial" class="block text-sm font-medium text-gray-700">Horímetro Inicial</label>
                 <input type="text" id="horimetroInicial" name="horimetroInicial" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Ex: 1234.5">
@@ -848,16 +855,35 @@
     const horasPlanejadasInput = $("#horasPlanejadas");
     const velocidadeCarretelInput = $("#velocidadeCarretel");
     const metrosLinearesInput = $("#metrosLineares");
+    const quantidadeCarreteisInput = $("#quantidadeCarreteis");
 
     function calcularMetrosLineares() {
       const horas = parseFloat(horasPlanejadasInput.value) || 0;
       const velocidade = parseFloat(velocidadeCarretelInput.value) || 0;
-      const metros = horas * velocidade;
+      const quantidade = parseInt(quantidadeCarreteisInput.value, 10) || 0;
+      const metros = horas * velocidade * quantidade;
       metrosLinearesInput.value = metros.toFixed(2);
     }
 
     horasPlanejadasInput.addEventListener("input", calcularMetrosLineares);
     velocidadeCarretelInput.addEventListener("input", calcularMetrosLineares);
+    quantidadeCarreteisInput.addEventListener("input", calcularMetrosLineares);
+
+
+    // ===== Lógica de Carretéis Dinâmicos =====
+    const carreteisContainer = $("#carreteisContainer");
+    quantidadeCarreteisInput.addEventListener('input', () => {
+        const quantidade = parseInt(quantidadeCarreteisInput.value, 10) || 0;
+        carreteisContainer.innerHTML = ''; // Limpa o container
+        for (let i = 1; i <= quantidade; i++) {
+            const div = document.createElement('div');
+            div.innerHTML = `
+                <label for="numeroCarretel_${i}" class="block text-sm font-semibold mb-1">N° Carretel ${i}</label>
+                <input id="numeroCarretel_${i}" data-index="${i}" required class="w-full border rounded px-3 py-2 numero-carretel-dinamico" placeholder="Ex: 13800${i}" />
+            `;
+            carreteisContainer.appendChild(div);
+        }
+    });
 
 
     // ===== Lógica Principal de Dados (Áreas) =====
@@ -927,13 +953,15 @@
                 card.className = `bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${isFinalizada ? 'opacity-60 bg-gray-50' : ''}`;
                 
                 const atualizado = data.atualizadoEm ? formatDateTime(data.atualizadoEm) : "-";
+                const carreteisStr = Array.isArray(data.carreteis) ? data.carreteis.join(', ') : (data.numeroCarretel || '-');
+
 
                 // Botões mudam com base no status da área
-const buttonsHTML = isFinalizada
-  ? `<button class="btnReativar w-full bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" data-id="${docSnap.id}">Reativar Irrigação</button>
-      <button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>` // 
-  : `<button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>
-      <button class="btnFinalizar bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" data-id="${docSnap.id}">Finalizar Irrigação</button>`;
+                const buttonsHTML = isFinalizada
+                ? `<button class="btnReativar w-full bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" data-id="${docSnap.id}">Reativar Irrigação</button>
+                    <button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>` // 
+                : `<button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>
+                    <button class="btnFinalizar bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" data-id="${docSnap.id}">Finalizar Irrigação</button>`;
 
                 card.innerHTML = `
                   <div class="flex-1 flex flex-col gap-1 text-sm">
@@ -943,9 +971,9 @@ const buttonsHTML = isFinalizada
                     </div>
                     <div><strong>Projeto:</strong> ${data.projeto || "-"}</div>
                     <div><strong>Bombeamento:</strong> ${data.bombeamento || "-"}</div>
-                    <div><strong>Carretel:</strong> ${data.numeroCarretel || "-"}</div>
+                    <div><strong>Carretel(éis):</strong> ${carreteisStr}</div>
                     <div><strong>Velocidade:</strong> ${data.velocidadeCarretel || "-"} m/h</div>
-                    <div><strong>Metros Lineares:</strong> ${data.metrosLineares || "-"} m</div>
+                    <div><strong>Metros Lineares (Plano):</strong> ${data.metrosLineares || "-"} m</div>
                     <div><strong>Vazão:</strong> ${data.vazao || "-"}</div>
                     <div><strong>Croqui:</strong> ${data.numeroCroqui || "-"}</div>
                     <div><strong>Próx. Bloco:</strong> ${data.proxBloco || "-"}</div>
@@ -988,6 +1016,8 @@ async function carregarParaEdicao(id) {
         }
 
         const d = snap.data();
+        $("#formArea").reset();
+        carreteisContainer.innerHTML = '';
 
         // Carrega todos os dados do banco de dados para o formulário
         $("#projeto").value = d.projeto || "";
@@ -995,15 +1025,35 @@ async function carregarParaEdicao(id) {
         $("#bloco").value = d.bloco || "";
         $("#proxBloco").value = d.proxBloco || "";
         $("#numeroEletrobomba").value = d.numeroEletrobomba || "";
-        $("#numeroCarretel").value = d.numeroCarretel || "";
+        
+        // Lógica para carretéis
+        const qtdCarreteis = d.quantidadeCarreteis || (Array.isArray(d.carreteis) ? d.carreteis.length : 1);
+        quantidadeCarreteisInput.value = qtdCarreteis;
+        quantidadeCarreteisInput.dispatchEvent(new Event('input')); // Dispara o evento para criar os campos
+        
+        // Aguarda um ciclo para garantir que os campos foram criados antes de preenchê-los
+        setTimeout(() => {
+          if (Array.isArray(d.carreteis)) {
+            d.carreteis.forEach((num, index) => {
+              const input = $(`#numeroCarretel_${index + 1}`);
+              if (input) input.value = num;
+            });
+          } else if (d.numeroCarretel) { // Compatibilidade com o formato antigo
+             const input = $(`#numeroCarretel_1`);
+             if (input) input.value = d.numeroCarretel;
+          }
+        }, 0);
+
+
         $("#tipoArea").value = d.tipoArea || "";
         $("#tipoIrrigacao").value = d.tipoIrrigacao || "";
         $("#tipoProduto").value = d.tipoProduto || "";
         $("#horasPlanejadas").value = Number(d.horasPlanejadas || 0);
-        $("#velocidadeCarretel").value = Number(d.velocidadeCarretel || 0); // NOVO
-        $("#metrosLineares").value = Number(d.metrosLineares || 0).toFixed(2); // NOVO
+        $("#velocidadeCarretel").value = Number(d.velocidadeCarretel || 0);
         $("#numeroCroqui").value = d.numeroCroqui || "";
         $("#vazao").value = d.vazao || "";
+        
+        calcularMetrosLineares(); // Recalcula os metros com os dados carregados
         
         editDocId = id;
         $("#cancelarEdicao").classList.remove("hidden");
@@ -1017,22 +1067,34 @@ async function carregarParaEdicao(id) {
     $("#cancelarEdicao").addEventListener("click", () => {
         editDocId = null;
         $("#formArea").reset();
+        carreteisContainer.innerHTML = '';
         $("#cancelarEdicao").classList.add("hidden");
     });
 
     $("#formArea").addEventListener("submit", async (e) => {
         e.preventDefault();
+
+        const carreteisInputs = $$(".numero-carretel-dinamico");
+        const carreteis = carreteisInputs.map(input => input.value.trim());
+        if (carreteis.some(c => !c)) {
+            return showMessage("Preencha o número de todos os carretéis.", "error");
+        }
+
         const payload = {
             projeto: $("#projeto").value.trim(), bombeamento: $("#bombeamento").value.trim(),
             bloco: $("#bloco").value.trim(), proxBloco: $("#proxBloco").value.trim(),
-            numeroEletrobomba: $("#numeroEletrobomba").value.trim(), numeroCarretel: $("#numeroCarretel").value.trim(),
+            numeroEletrobomba: $("#numeroEletrobomba").value.trim(), 
+            quantidadeCarreteis: Number(quantidadeCarreteisInput.value || 0),
+            carreteis: carreteis,
             tipoArea: $("#tipoArea").value.trim(), tipoIrrigacao: $("#tipoIrrigacao").value.trim(),
             tipoProduto: $("#tipoProduto").value.trim(), horasPlanejadas: Number($("#horasPlanejadas").value || 0),
-            velocidadeCarretel: Number($("#velocidadeCarretel").value || 0), // NOVO
-            metrosLineares: Number($("#metrosLineares").value || 0), // NOVO
+            velocidadeCarretel: Number($("#velocidadeCarretel").value || 0), 
+            metrosLineares: Number($("#metrosLineares").value || 0),
             numeroCroqui: $("#numeroCroqui").value.trim(), vazao: $("#vazao").value.trim(),
             atualizadoEm: new Date().toISOString()
         };
+        // Remove a propriedade antiga para limpar a base de dados
+        delete payload.numeroCarretel;
 
         const requiredFields = Array.from($("#formArea").querySelectorAll("[required]"));
         if (requiredFields.some(input => !input.value.trim())) {
@@ -1051,6 +1113,7 @@ async function carregarParaEdicao(id) {
             }
             editDocId = null;
             $("#formArea").reset();
+            carreteisContainer.innerHTML = '';
             $("#cancelarEdicao").classList.add("hidden");
         } catch (e) { console.error(e); showMessage("Erro ao salvar área.", "error"); }
     });
@@ -1097,14 +1160,16 @@ async function carregarParaEdicao(id) {
             statusEl.innerHTML = ""; statusEl.appendChild(badge);
           })();
 
+          const carreteisStr = Array.isArray(area.carreteis) ? area.carreteis.join(', ') : (area.numeroCarretel || '-');
+
           card.innerHTML = `
             <div class="text-sm">
               <div class="font-semibold text-base text-blue-900">${area.bloco || "-"}</div>
               <div><strong>Projeto:</strong> ${area.projeto || "-"}</div>
               <div><strong>Bombeamento:</strong> ${area.bombeamento || "-"}</div>
-              <div><strong>Carretel:</strong> ${area.numeroCarretel || "-"}</div>
+              <div><strong>Carretel(éis):</strong> ${carreteisStr}</div>
               <div><strong>Velocidade:</strong> ${area.velocidadeCarretel || "-"} m/h</div>
-              <div><strong>Metros Lineares:</strong> ${area.metrosLineares || "-"} m</div>
+              <div><strong>Metros Lineares (Plano):</strong> ${area.metrosLineares || "-"} m</div>
               <div><strong>Vazão:</strong> ${area.vazao || "-"}</div>
               <div><strong>Horas Planejadas:</strong> ${Number(area.horasPlanejadas||0)}</div>
               <div><strong>Croqui:</strong> ${area.numeroCroqui || "-"}</div>
@@ -1136,8 +1201,11 @@ async function carregarParaEdicao(id) {
     const detalhesParada = $("#detalhesParada");
     const duracaoParadaEl = $("#duracaoParada");
     const overlapAlert = $("#alertOverlap");
+    const selecaoCarretelParadaDiv = $("#selecaoCarretelParada");
+    const codParadaSelect = $("#codParada");
+
     let areaAtual = null;
-    let editParadaId = null; // NOVO: para controlar edição de parada
+    let editParadaId = null; 
 
     formParada.querySelectorAll('input[name="tipoRegistro"]').forEach(r => {
       r.addEventListener("change", (ev) => {
@@ -1149,6 +1217,14 @@ async function carregarParaEdicao(id) {
             detalhesParada.classList.toggle("hidden", selectedValue === "complementar");
         }
       });
+    });
+
+    codParadaSelect.addEventListener('change', (e) => {
+        if (e.target.value === 'C') {
+            selecaoCarretelParadaDiv.classList.remove('hidden');
+        } else {
+            selecaoCarretelParadaDiv.classList.add('hidden');
+        }
     });
 
     function calcularDuracaoModal() {
@@ -1183,7 +1259,8 @@ async function carregarParaEdicao(id) {
         <div><strong>Bloco:</strong> ${areaDoc.bloco || "-"}</div>
         <div><strong>Bombeamento:</strong> ${areaDoc.bombeamento || "-"}</div>
       `;
-      formParada.reset(); 
+      formParada.reset();
+      selecaoCarretelParadaDiv.classList.add('hidden');
       $('input[name="tipoRegistro"][value="sem_parada"]').checked = true;
       descricaoProblemaOutroTextarea.value = '';
       descricaoProblemaOutroTextarea.classList.add('hidden');
@@ -1191,6 +1268,18 @@ async function carregarParaEdicao(id) {
       detalhesParada.classList.remove("hidden");
       duracaoParadaEl.textContent = "-"; 
       overlapAlert.classList.add("hidden");
+
+      // Popula o seletor de carretéis
+      const selectCarretelParada = $("#numeroCarretelParada");
+      selectCarretelParada.innerHTML = '<option value="">Selecione o Carretel</option>';
+      if(Array.isArray(areaDoc.carreteis) && areaDoc.carreteis.length > 0) {
+          areaDoc.carreteis.forEach((num, index) => {
+              const option = document.createElement('option');
+              option.value = num;
+              option.textContent = `Carretel ${index + 1}: ${num}`;
+              selectCarretelParada.appendChild(option);
+          });
+      }
       
       if (paradaParaEditar) {
           const p = paradaParaEditar;
@@ -1207,6 +1296,10 @@ async function carregarParaEdicao(id) {
 
             if(tipo === 'parada'){
               $("#codParada").value = p.codParada || "";
+              if (p.codParada === 'C') {
+                  selecaoCarretelParadaDiv.classList.remove('hidden');
+                  $("#numeroCarretelParada").value = p.numeroCarretelParado || "";
+              }
               $("#horimetroInicial").value = p.horimetroInicial || "";
               $("#horimetroFinal").value = p.horimetroFinal || "";
               $("#equipamentoProblemaModal").value = p.equipamentoProblema || "";
@@ -1281,8 +1374,9 @@ async function carregarParaEdicao(id) {
               if (p.descricaoProblemaOutro) {
                   problemaHTML += `<div><strong>Outro:</strong> ${p.descricaoProblemaOutro}</div>`;
               }
+              const equipamento = p.codParada === 'C' ? `Carretel ${p.numeroCarretelParado || '(não especificado)'}` : `${p.codParada || "-"} ${p.equipamentoProblema ? "• " + p.equipamentoProblema : ""}`;
               detalhesHTML = `
-                <div><strong>Equip.:</strong> ${p.codParada || "-"} ${p.equipamentoProblema ? "• " + p.equipamentoProblema : ""}</div>
+                <div><strong>Equip.:</strong> ${equipamento}</div>
                 ${problemaHTML}
                 <div><strong>Início:</strong> ${formatDateTime(p.inicioParada)} • <strong>Fim:</strong> ${formatDateTime(p.fimParada)}</div>
                 <div><strong>Duração:</strong> ${durh} h</div>
@@ -1397,6 +1491,12 @@ async function carregarParaEdicao(id) {
 
             if (tipoRegistro === 'parada') {
                 const codParada = $("#codParada").value;
+                if (codParada === 'C') {
+                    const carretelParado = $("#numeroCarretelParada").value;
+                    if (!carretelParado) return showMessage("Selecione o carretel que apresentou a parada.", "error");
+                    payload.numeroCarretelParado = carretelParado;
+                }
+
                 const descricaoCodigo = $("#descricaoParadaCodigoSelect").value;
                 const descricoesSelecionadas = Array.from($$('input[name="problema"]:checked')).map(cb => cb.value);
                 const descricaoOutro = problemaOutroCheckbox.checked ? descricaoProblemaOutroTextarea.value.trim() : "";
@@ -1490,15 +1590,16 @@ async function carregarParaEdicao(id) {
         );
 
         const paradasSnap = await getDocs(qy);
+        const carreteisStr = Array.isArray(area.carreteis) ? area.carreteis.join('; ') : area.numeroCarretel || '';
+
         if (paradasSnap.empty) {
             all.push({
                 projeto: area.projeto || "",
                 bloco: area.bloco || "",
                 bombeamento: area.bombeamento || "",
                 numeroEletrobomba: area.numeroEletrobomba || "",
-                numeroCarretel: area.numeroCarretel || "",
+                numeroCarreteis: carreteisStr,
                 descricaoCompletaParada: "Sem registro de atividade",
-                //... outros campos da área
             });
         } else {
             paradasSnap.forEach(p => {
@@ -1508,7 +1609,8 @@ async function carregarParaEdicao(id) {
               
               let descricaoCompleta = "Operação Normal";
               if(dados.tipoRegistro === 'parada'){
-                descricaoCompleta = `PARADA: ${dados.descricaoParadaCodigo || ''} (${descricaoProblemas}${descricaoOutro})`;
+                const carretelInfo = dados.codParada === 'C' ? `Carretel ${dados.numeroCarretelParado}` : '';
+                descricaoCompleta = `PARADA: ${carretelInfo} ${dados.descricaoParadaCodigo || ''} (${descricaoProblemas}${descricaoOutro})`;
               } else if (dados.tipoRegistro === 'complementar') {
                 descricaoCompleta = "IRRIGAÇÃO COMPLEMENTAR";
               }
@@ -1518,9 +1620,9 @@ async function carregarParaEdicao(id) {
                 bloco: area.bloco || "",
                 bombeamento: area.bombeamento || "",
                 numeroEletrobomba: area.numeroEletrobomba || "",
-                numeroCarretel: area.numeroCarretel || "",
+                numeroCarreteis: carreteisStr,
                 velocidadeCarretel: area.velocidadeCarretel || "",
-                metrosLineares: area.metrosLineares || "",
+                metrosLinearesPlano: area.metrosLineares || "",
                 vazao: area.vazao || "",
                 tipoArea: area.tipoArea || "",
                 tipoIrrigacao: area.tipoIrrigacao || "",
@@ -1589,7 +1691,7 @@ async function carregarParaEdicao(id) {
       doc.save(`${titulo.replaceAll(" ","_").toLowerCase()}_${ymd}.pdf`);
     }
 
-    // ===== RELATÓRIOS CONSOLIDADOS =====
+    // ===== RELATÓRIOS CONSOLIDADOS - LÓGICA REFORMULADA =====
     $("#btnGerarRelatorio").addEventListener("click", gerarRelatoriosUI);
     $("#btnExportCSVRel").addEventListener("click", async () => {
       const { ymd, linhas } = await calcularRelatorio();
@@ -1615,8 +1717,8 @@ async function carregarParaEdicao(id) {
         .filter(a=> !filtroProj || a.projeto === filtroProj);
 
       const linhas = [];
-      let totalPlan = 0, totalPar = 0, totalMetrosPlano = 0, totalMetrosReal = 0;
-      let totalHectaresPlano = 0, totalHectaresReal = 0, totalMetrosHorimetro = 0, totalComplementar = 0;
+      let totalPlan = 0, totalParSistema = 0, totalMetrosPlano = 0, totalMetrosReal = 0;
+      let totalHectaresPlano = 0, totalHectaresReal = 0, totalMetrosHorimetro = 0, totalComplementar = 0, totalRodadasEficiencia = 0;
 
       for (const area of areas){
         const ref = collection(doc(db, COLLECTION, area.id), "paradas");
@@ -1625,40 +1727,65 @@ async function carregarParaEdicao(id) {
           where("inicioParada", "<=", end.toISOString())
         );
         const snap = await getDocs(qy);
-        let horasParadas = 0;
-        let horasHorimetro = 0;
+
+        let horasParadasSistema = 0;
         let horasComplementar = 0;
+        let horasHorimetro = 0;
+        const paradasPorCarretel = {}; // { '138001': 2.5, '138002': 1.0 }
+
         snap.forEach(s=>{
           const p = s.data();
-          if (p.houveParada && p.duracaoHoras) horasParadas += Number(p.duracaoHoras)||0;
-          if (p.tipoRegistro === 'complementar' && p.duracaoHoras) horasComplementar += Number(p.duracaoHoras) || 0;
+          const duracao = Number(p.duracaoHoras) || 0;
+          if (p.houveParada) {
+              if (p.codParada === 'E' || p.codParada === 'R') {
+                  horasParadasSistema += duracao;
+              } else if (p.codParada === 'C' && p.numeroCarretelParado) {
+                  paradasPorCarretel[p.numeroCarretelParado] = (paradasPorCarretel[p.numeroCarretelParado] || 0) + duracao;
+              }
+          }
+          if (p.tipoRegistro === 'complementar') horasComplementar += duracao;
           if (p.horimetroFinal && p.horimetroInicial) {
               horasHorimetro += (Number(String(p.horimetroFinal).replace(',','.')) - Number(String(p.horimetroInicial).replace(',','.')));
           }
         });
 
         const planejadas = Number(area.horasPlanejadas||0);
-        const rodadas = Math.max(0, planejadas - horasParadas);
-        const horasEfetivasIrrigacao = Math.max(0, rodadas - horasComplementar);
-        const efic = planejadas > 0 ? (rodadas/planejadas)*100 : 0;
-        
         const velocidade = Number(area.velocidadeCarretel || 0);
-        const metrosPlano = Number(area.metrosLineares || 0);
-        const metrosReal = horasEfetivasIrrigacao * velocidade;
-        const metrosRealHorimetro = horasHorimetro * velocidade;
-        const hectaresPlano = metrosPlano * fatorCarreador;
-        const hectaresReal = metrosReal * fatorCarreador;
+        const qtdCarreteis = Number(area.quantidadeCarreteis || 1);
+        const carreteis = Array.isArray(area.carreteis) ? area.carreteis : [];
 
+        // Cálculo de Metros Lineares Real por carretel
+        let metrosRealArea = 0;
+        let totalHorasRodadasReais = 0;
+        for(const numCarretel of carreteis) {
+            const paradasDoCarretel = paradasPorCarretel[numCarretel] || 0;
+            const horasRodadasCarretel = Math.max(0, planejadas - horasParadasSistema - paradasDoCarretel);
+            totalHorasRodadasReais += horasRodadasCarretel;
+            metrosRealArea += horasRodadasCarretel * velocidade;
+        }
+
+        const horasRodadasParaEficiencia = Math.max(0, planejadas - horasParadasSistema);
+        const efic = planejadas > 0 ? (horasRodadasParaEficiencia / planejadas) * 100 : 0;
+        
+        const metrosPlano = planejadas * velocidade * qtdCarreteis;
+        
+        const hectaresPlano = metrosPlano * fatorCarreador;
+        const hectaresReal = metrosRealArea * fatorCarreador;
+
+        // Lógica horímetro: (final - inicial) * vel * qtd, conforme solicitado
+        const metrosRealHorimetro = horasHorimetro * velocidade * qtdCarreteis;
 
         totalPlan += planejadas;
-        totalPar += horasParadas;
+        totalParSistema += horasParadasSistema;
         totalComplementar += horasComplementar;
         totalMetrosPlano += metrosPlano;
-        totalMetrosReal += metrosReal;
+        totalMetrosReal += metrosRealArea;
         totalHectaresPlano += hectaresPlano;
         totalHectaresReal += hectaresReal;
         totalMetrosHorimetro += metrosRealHorimetro;
+        totalRodadasEficiencia += horasRodadasParaEficiencia;
 
+        const carreteisStr = carreteis.join(', ');
 
         linhas.push({
           numeroCroqui: area.numeroCroqui || "",
@@ -1666,26 +1793,25 @@ async function carregarParaEdicao(id) {
           bloco: area.bloco || "",
           bombeamento: area.bombeamento || "",
           eletrobomba: area.numeroEletrobomba || "",
-          carretel: area.numeroCarretel || "",
+          carretel: carreteisStr,
           horasPlanejadas: planejadas.toFixed(2),
-          horasParadas: horasParadas.toFixed(2),
+          horasParadas: horasParadasSistema.toFixed(2),
           horasComplementar: horasComplementar.toFixed(2),
-          horasRodadas: rodadas.toFixed(2),
+          horasRodadas: horasRodadasParaEficiencia.toFixed(2),
           eficiencia: `${efic.toFixed(1)}%`,
           metrosLinearesPlano: metrosPlano.toFixed(2),
-          metrosLinearesReal: metrosReal.toFixed(2),
+          metrosLinearesReal: metrosRealArea.toFixed(2),
           hectaresPlano: hectaresPlano.toFixed(2),
           hectaresReal: hectaresReal.toFixed(2),
         });
       }
 
-      const rodadasTot = Math.max(0, totalPlan - totalPar);
-      const eficTot = totalPlan > 0 ? (rodadasTot/totalPlan)*100 : 0;
+      const eficTot = totalPlan > 0 ? (totalRodadasEficiencia/totalPlan)*100 : 0;
 
       return {
         ymd,
         sum: { 
-          totalPlan, totalPar, rodadasTot, eficTot, 
+          totalPlan, totalPar: totalParSistema, rodadasTot: totalRodadasEficiencia, eficTot, 
           totalMetrosPlano, totalMetrosReal, 
           totalHectaresPlano, totalHectaresReal,
           totalMetrosHorimetro, totalComplementar
@@ -1728,7 +1854,7 @@ async function carregarParaEdicao(id) {
 
       const table = document.createElement("div");
       table.className = "overflow-auto";
-      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","H. Plan","H. Par", "H. Compl.", "H. Rod","Efic.", "ML Plan (m)", "ML Real (m)", "HA Plan (ha)", "HA Real (ha)"];
+      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel(éis)","H. Plan","H. Par(Sist)","H. Compl.", "H. Rod","Efic.", "ML Plan (m)", "ML Real (m)", "HA Plan (ha)", "HA Real (ha)"];
       const thead = `<thead><tr>${headers.map(h=>`<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
       const tbody = `<tbody>${linhas.map(l=>`
         <tr class="hover:bg-gray-50">
@@ -1798,32 +1924,45 @@ async function carregarParaEdicao(id) {
         const qy = query(ref, where("inicioParada", ">=", start.toISOString()), where("inicioParada", "<=", end.toISOString()), orderBy("inicioParada", "asc"));
         const snap = await getDocs(qy);
 
-        let horasParadas = 0;
+        let horasParadasSistema = 0;
         let horasHorimetro = 0;
         let horasComplementar = 0;
+        const paradasPorCarretel = {};
         const paradasTabela = [];
 
         snap.forEach(s => {
             const p = s.data();
+            const duracao = Number(p.duracaoHoras) || 0;
             const tipo = p.tipoRegistro || (p.houveParada ? 'parada' : 'sem_parada');
 
-            if (p.houveParada && p.duracaoHoras) horasParadas += Number(p.duracaoHoras) || 0;
-            if (tipo === 'complementar' && p.duracaoHoras) horasComplementar += Number(p.duracaoHoras) || 0;
+            if (p.houveParada) {
+                 if (p.codParada === 'E' || p.codParada === 'R') {
+                    horasParadasSistema += duracao;
+                } else if (p.codParada === 'C' && p.numeroCarretelParado) {
+                    paradasPorCarretel[p.numeroCarretelParado] = (paradasPorCarretel[p.numeroCarretelParado] || 0) + duracao;
+                }
+            }
+            if (tipo === 'complementar') horasComplementar += duracao;
             
             if (p.horimetroFinal && p.horimetroInicial) {
                 horasHorimetro += (Number(String(p.horimetroFinal).replace(',','.')) - Number(String(p.horimetroInicial).replace(',','.')));
             }
 
             let tipoLabel = "Op. Normal";
-            if (tipo === 'parada') tipoLabel = "Parada";
+            let problema = '-';
+            if (tipo === 'parada') {
+                tipoLabel = `Parada (${p.codParada === 'C' ? 'Carretel' : 'Sistema'})`;
+                problema = (Array.isArray(p.descricaoProblema) ? p.descricaoProblema.join(', ') : '') + (p.descricaoProblemaOutro ? ` (Outro: ${p.descricaoProblemaOutro})` : '');
+            }
             if (tipo === 'complementar') tipoLabel = "Irrig. Compl.";
             
             paradasTabela.push({
                 tipoRegistro: tipoLabel,
-                problema: (Array.isArray(p.descricaoProblema) ? p.descricaoProblema.join(', ') : '') + (p.descricaoProblemaOutro ? ` (Outro: ${p.descricaoProblemaOutro})` : '-'),
+                problema: problema,
+                carretel: p.numeroCarretelParado || '-',
                 inicio: formatDateTime(p.inicioParada),
                 fim: formatDateTime(p.fimParada),
-                duracao: (Number(p.duracaoHoras) || 0).toFixed(2),
+                duracao: duracao.toFixed(2),
                 horimetroInicial: p.horimetroInicial || "-",
                 horimetroFinal: p.horimetroFinal || "-",
                 descricaoCompleta: p.descricaoParadaCodigo || "-"
@@ -1831,24 +1970,35 @@ async function carregarParaEdicao(id) {
         });
 
         const planejadas = Number(area.horasPlanejadas || 0);
-        const rodadas = Math.max(0, planejadas - horasParadas);
-        const horasEfetivasIrrigacao = Math.max(0, rodadas - horasComplementar);
-        const efic = planejadas > 0 ? (rodadas / planejadas) * 100 : 0;
-
         const velocidade = Number(area.velocidadeCarretel || 0);
-        const metrosPlano = Number(area.metrosLineares || 0);
-        const metrosReal = horasEfetivasIrrigacao * velocidade;
-        const metrosRealHorimetro = horasHorimetro * velocidade;
+        const qtdCarreteis = Number(area.quantidadeCarreteis || 1);
+        const carreteis = Array.isArray(area.carreteis) ? area.carreteis : [];
+
+        let metrosRealArea = 0;
+        let totalHorasRodadasReais = 0;
+        for(const numCarretel of carreteis) {
+            const paradasDoCarretel = paradasPorCarretel[numCarretel] || 0;
+            const horasRodadasCarretel = Math.max(0, planejadas - horasParadasSistema - paradasDoCarretel);
+            totalHorasRodadasReais += horasRodadasCarretel;
+            metrosRealArea += horasRodadasCarretel * velocidade;
+        }
+
+        const rodadas = Math.max(0, planejadas - horasParadasSistema);
+        const efic = planejadas > 0 ? (rodadas / planejadas) * 100 : 0;
+        
+        const metrosPlano = planejadas * velocidade * qtdCarreteis;
         const hectaresPlano = metrosPlano * fatorCarreador;
-        const hectaresReal = metrosReal * fatorCarreador;
+        const hectaresReal = metrosRealArea * fatorCarreador;
+
+        const metrosRealHorimetro = horasHorimetro * velocidade * qtdCarreteis;
 
         // Atualiza o sumário individual
         $("#sumPlanejadasInd").textContent = planejadas.toFixed(2);
-        $("#sumParadasInd").textContent = horasParadas.toFixed(2);
+        $("#sumParadasInd").textContent = horasParadasSistema.toFixed(2);
         $("#sumRodadasInd").textContent = rodadas.toFixed(2);
         $("#sumEficienciaInd").textContent = `${efic.toFixed(1)}%`;
         $("#sumMetrosPlanoInd").textContent = metrosPlano.toFixed(2);
-        $("#sumMetrosRealInd").textContent = metrosReal.toFixed(2);
+        $("#sumMetrosRealInd").textContent = metrosRealArea.toFixed(2);
         $("#sumHectaresPlanoInd").textContent = hectaresPlano.toFixed(2);
         $("#sumHectaresRealInd").textContent = hectaresReal.toFixed(2);
         $("#sumMetrosHorimetroInd").textContent = metrosRealHorimetro.toFixed(2);
@@ -1862,11 +2012,12 @@ async function carregarParaEdicao(id) {
         }
         const table = document.createElement("div");
         table.className = "overflow-auto";
-        const headers = ["Tipo Registro", "Problema", "Início", "Fim", "Duração (h)", "Horímetro Inicial", "Horímetro Final", "Cód. Parada"];
+        const headers = ["Tipo Registro", "Carretel", "Problema", "Início", "Fim", "Duração (h)", "Horímetro Inicial", "Horímetro Final", "Cód. Parada"];
         const thead = `<thead><tr>${headers.map(h => `<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
         const tbody = `<tbody>${paradasTabela.map(p => `
             <tr class="hover:bg-gray-50">
                 <td class="px-3 py-2 text-sm">${p.tipoRegistro}</td>
+                <td class="px-3 py-2 text-sm">${p.carretel}</td>
                 <td class="px-3 py-2 text-sm">${p.problema}</td>
                 <td class="px-3 py-2 text-sm">${p.inicio}</td>
                 <td class="px-3 py-2 text-sm">${p.fim}</td>
