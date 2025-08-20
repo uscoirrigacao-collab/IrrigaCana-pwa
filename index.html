@@ -331,6 +331,13 @@
               <div id="sumMetrosHorimetro" class="text-2xl font-bold text-cyan-900">0</div>
             </div>
           </div>
+          <div class="flex items-center space-x-3 bg-sky-50 border border-sky-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 16v-2m8-8h2M4 12H2m15.364 6.364l1.414 1.414M4.222 4.222l1.414 1.414m12.728 0l-1.414 1.414M5.636 18.364l-1.414 1.414" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-sky-700 uppercase">Irrig. Complementar (h)</div>
+              <div id="sumComplementar" class="text-2xl font-bold text-sky-900">0</div>
+            </div>
+          </div>
         </div>
 
         <div id="tabelaRel" class="space-y-3 mt-4"></div>
@@ -412,6 +419,13 @@
               <div id="sumMetrosHorimetroInd" class="text-2xl font-bold text-cyan-900">0</div>
             </div>
           </div>
+           <div class="flex items-center space-x-3 bg-sky-50 border border-sky-200 p-4 rounded-lg shadow-sm">
+            <svg class="w-8 h-8 text-sky-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 16v-2m8-8h2M4 12H2m15.364 6.364l1.414 1.414M4.222 4.222l1.414 1.414m12.728 0l-1.414 1.414M5.636 18.364l-1.414 1.414" /></svg>
+            <div>
+              <div class="text-xs font-semibold text-sky-700 uppercase">Irrig. Complementar (h)</div>
+              <div id="sumComplementarInd" class="text-2xl font-bold text-sky-900">0</div>
+            </div>
+          </div>
         </div>
         <div id="tabelaRelIndividual" class="space-y-3 mt-4"></div>
       </section>
@@ -423,79 +437,87 @@
   <div id="modalParada" class="fixed inset-0 bg-black/40 hidden items-center justify-center z-40">
     <div class="bg-white w-full max-w-xl rounded-lg shadow-lg p-6 relative max-h-[90vh] overflow-y-auto">
       <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-2xl leading-none">&times;</button>
-      <h3 id="modalTitle" class="text-xl font-semibold mb-4">Registrar Parada</h3>
+      <h3 id="modalTitle" class="text-xl font-semibold mb-4">Registrar Atividade Diária</h3>
 
       <div id="modalInfoArea" class="text-sm text-gray-700 mb-4"></div>
 
       <form id="formParada" class="space-y-4" novalidate>
         <fieldset class="border rounded p-3">
-          <legend class="font-semibold text-gray-800">Houve parada?</legend>
-          <label class="inline-flex items-center mr-6 cursor-pointer">
-            <input type="radio" name="houveParadaModal" value="sim" class="form-radio text-blue-600" required />
-            <span class="ml-2">Sim</span>
-          </label>
-          <label class="inline-flex items-center cursor-pointer">
-            <input type="radio" name="houveParadaModal" value="nao" class="form-radio text-blue-600" />
-            <span class="ml-2">Não</span>
-          </label>
+          <legend class="font-semibold text-gray-800">Tipo de Registro</legend>
+          <div class="flex flex-wrap gap-4 pt-1">
+              <label class="inline-flex items-center cursor-pointer">
+                  <input type="radio" name="tipoRegistro" value="sem_parada" class="form-radio text-blue-600" required checked />
+                  <span class="ml-2">Operação Normal (sem parada)</span>
+              </label>
+              <label class="inline-flex items-center cursor-pointer">
+                  <input type="radio" name="tipoRegistro" value="parada" class="form-radio text-blue-600" />
+                  <span class="ml-2 text-red-700 font-medium">Registrar Parada</span>
+              </label>
+              <label class="inline-flex items-center cursor-pointer">
+                  <input type="radio" name="tipoRegistro" value="complementar" class="form-radio text-blue-600" />
+                  <span class="ml-2 text-cyan-700 font-medium">Irrigação Complementar</span>
+              </label>
+          </div>
         </fieldset>
 
-        <div id="camposParada" class="hidden space-y-3">
-          <div>
-            <label class="block text-sm font-semibold">Tipo de equipamento</label>
-            <select id="codParada" class="w-full border rounded px-3 py-2" required>
-              <option value="">Selecione</option>
-              <option value="E">Eletrobomba (E)</option>
-              <option value="C">Carretel (C)</option>
-              <option value="R">Rede (R)</option>
-            </select>
-          </div>
-          
-          <div>
-            <label for="horimetroInicial" class="block text-sm font-medium text-gray-700">Horímetro Inicial</label>
-            <input type="text" id="horimetroInicial" name="horimetroInicial" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Ex: 1234.5">
-          </div>
-          <div>
-            <label for="horimetroFinal" class="block text-sm font-medium text-gray-700">Horímetro Final</label>
-            <input type="text" id="horimetroFinal" name="horimetroFinal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Ex: 1235.0">
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold">Equipamento/Rede com problema</label>
-            <input id="equipamentoProblemaModal" type="text" class="w-full border rounded px-3 py-2" placeholder="Ex: 130001 ou Rede St.Antonio" />
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold">Descrição da Parada (código)</label>
-            <select id="descricaoParadaCodigoSelect" class="w-full border rounded px-3 py-2" required></select>
-          </div>
-
-          <div>
-            <label class="block text-sm font-semibold">Descrição do Problema (selecione um ou mais)</label>
-            <div id="listaProblemas" class="max-h-48 overflow-y-auto border rounded p-2 space-y-1 mt-1">
+        <div id="camposRegistro" class="hidden space-y-3">
+            <div id="detalhesParada" class="space-y-3">
+              <div>
+                <label class="block text-sm font-semibold">Tipo de equipamento</label>
+                <select id="codParada" class="w-full border rounded px-3 py-2" required>
+                  <option value="">Selecione</option>
+                  <option value="E">Eletrobomba (E)</option>
+                  <option value="C">Carretel (C)</option>
+                  <option value="R">Rede (R)</option>
+                </select>
               </div>
-            <div class="mt-2">
-                <label class="inline-flex items-center cursor-pointer">
-                    <input type="checkbox" id="problemaOutro" class="form-checkbox">
-                    <span class="ml-2">Outro</span>
-                </label>
-                <textarea id="descricaoProblemaOutro" class="hidden w-full border rounded px-3 py-2 mt-1" rows="2" placeholder="Descreva o outro problema"></textarea>
-            </div>
-          </div>
+              
+              <div>
+                <label for="horimetroInicial" class="block text-sm font-medium text-gray-700">Horímetro Inicial</label>
+                <input type="text" id="horimetroInicial" name="horimetroInicial" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Ex: 1234.5">
+              </div>
+              <div>
+                <label for="horimetroFinal" class="block text-sm font-medium text-gray-700">Horímetro Final</label>
+                <input type="text" id="horimetroFinal" name="horimetroFinal" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm" placeholder="Ex: 1235.0">
+              </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div>
-              <label class="block text-sm font-semibold">Início</label>
-              <input id="inicioParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
-            </div>
-            <div>
-              <label class="block text-sm font-semibold">Término</label>
-              <input id="fimParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
-            </div>
-          </div>
+              <div>
+                <label class="block text-sm font-semibold">Equipamento/Rede com problema</label>
+                <input id="equipamentoProblemaModal" type="text" class="w-full border rounded px-3 py-2" placeholder="Ex: 130001 ou Rede St.Antonio" />
+              </div>
 
-          <div class="text-sm text-gray-700">Duração: <span id="duracaoParada">-</span></div>
-          <div id="alertOverlap" class="hidden text-sm text-red-600">⚠️ O intervalo informado se sobrepõe a uma parada já registrada.</div>
+              <div>
+                <label class="block text-sm font-semibold">Descrição da Parada (código)</label>
+                <select id="descricaoParadaCodigoSelect" class="w-full border rounded px-3 py-2" required></select>
+              </div>
+
+              <div>
+                <label class="block text-sm font-semibold">Descrição do Problema (selecione um ou mais)</label>
+                <div id="listaProblemas" class="max-h-48 overflow-y-auto border rounded p-2 space-y-1 mt-1">
+                </div>
+                <div class="mt-2">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="problemaOutro" class="form-checkbox">
+                        <span class="ml-2">Outro</span>
+                    </label>
+                    <textarea id="descricaoProblemaOutro" class="hidden w-full border rounded px-3 py-2 mt-1" rows="2" placeholder="Descreva o outro problema"></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-semibold">Início</label>
+                <input id="inicioParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold">Término</label>
+                <input id="fimParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
+              </div>
+            </div>
+
+            <div class="text-sm text-gray-700">Duração: <span id="duracaoParada">-</span></div>
+            <div id="alertOverlap" class="hidden text-sm text-red-600">⚠️ O intervalo informado se sobrepõe a um registro existente.</div>
         </div>
 
         <div class="flex justify-end gap-3 pt-2">
@@ -1070,6 +1092,7 @@ async function carregarParaEdicao(id) {
             badge.className = "inline-flex items-center px-2 py-0.5 rounded text-xs font-medium";
             if (st === "com_parada") { badge.className += " bg-red-100 text-red-800"; badge.textContent = "Com parada"; }
             else if (st === "sem_parada") { badge.className += " bg-green-100 text-green-800"; badge.textContent = "Sem parada"; }
+             else if (st === "com_complementar") { badge.className += " bg-sky-100 text-sky-800"; badge.textContent = "Com Irrig. Complementar"; }
             else { badge.className += " bg-gray-100 text-gray-800"; badge.textContent = "Sem registros"; }
             statusEl.innerHTML = ""; statusEl.appendChild(badge);
           })();
@@ -1089,7 +1112,7 @@ async function carregarParaEdicao(id) {
             </div>
             <div class="flex flex-col md:items-end gap-2 w-full md:w-auto">
               <div class="mb-1" id="statusWrap"></div>
-              <button class="btnAddParada bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full md:w-auto">+ Parada</button>
+              <button class="btnAddParada bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full md:w-auto">+ Registrar Atividade</button>
               <button class="btnVerHistorico bg-gray-200 px-4 py-2 rounded hover:bg-gray-300 w-full md:w-auto">Histórico (${ymd})</button>
             </div>
           `;
@@ -1109,19 +1132,25 @@ async function carregarParaEdicao(id) {
     const closeModalBtn = $("#closeModal");
     const cancelarParadaBtn = $("#cancelarParada");
     const formParada = $("#formParada");
-    const camposParada = $("#camposParada");
+    const camposRegistro = $("#camposRegistro");
+    const detalhesParada = $("#detalhesParada");
     const duracaoParadaEl = $("#duracaoParada");
     const overlapAlert = $("#alertOverlap");
     let areaAtual = null;
     let editParadaId = null; // NOVO: para controlar edição de parada
 
-    formParada.querySelectorAll('input[name="houveParadaModal"]').forEach(r => {
+    formParada.querySelectorAll('input[name="tipoRegistro"]').forEach(r => {
       r.addEventListener("change", (ev) => {
-        const selected = ev.target;
-        if (selected.value === "sim" && selected.checked) camposParada.classList.remove("hidden");
-        else if (selected.value === "nao" && selected.checked) camposParada.classList.add("hidden");
+        const selectedValue = ev.target.value;
+        if (selectedValue === "sem_parada") {
+            camposRegistro.classList.add("hidden");
+        } else {
+            camposRegistro.classList.remove("hidden");
+            detalhesParada.classList.toggle("hidden", selectedValue === "complementar");
+        }
       });
     });
+
     function calcularDuracaoModal() {
       const inicio = $("#inicioParada").value;
       const fim = $("#fimParada").value;
@@ -1146,7 +1175,7 @@ async function carregarParaEdicao(id) {
       areaAtual = areaDoc;
       editParadaId = paradaParaEditar ? paradaParaEditar.id : null;
 
-      $("#modalTitle").textContent = editParadaId ? "Editar Parada" : "Registrar Parada";
+      $("#modalTitle").textContent = editParadaId ? "Editar Registro" : "Registrar Atividade Diária";
       $("#submitParadaBtn").textContent = editParadaId ? "Salvar Alterações" : "Salvar";
 
       $("#modalInfoArea").innerHTML = `
@@ -1155,39 +1184,49 @@ async function carregarParaEdicao(id) {
         <div><strong>Bombeamento:</strong> ${areaDoc.bombeamento || "-"}</div>
       `;
       formParada.reset(); 
+      $('input[name="tipoRegistro"][value="sem_parada"]').checked = true;
       descricaoProblemaOutroTextarea.value = '';
       descricaoProblemaOutroTextarea.classList.add('hidden');
-      camposParada.classList.add("hidden"); 
+      camposRegistro.classList.add("hidden"); 
+      detalhesParada.classList.remove("hidden");
       duracaoParadaEl.textContent = "-"; 
       overlapAlert.classList.add("hidden");
       
       if (paradaParaEditar) {
           const p = paradaParaEditar;
-          $('input[name="houveParadaModal"][value="sim"]').checked = true;
-          camposParada.classList.remove("hidden");
-          $("#codParada").value = p.codParada || "";
-          $("#horimetroInicial").value = p.horimetroInicial || "";
-          $("#horimetroFinal").value = p.horimetroFinal || "";
-          $("#equipamentoProblemaModal").value = p.equipamentoProblema || "";
-          $("#descricaoParadaCodigoSelect").value = p.descricaoParadaCodigo || "";
-          
-          $$('input[name="problema"]').forEach(cb => cb.checked = false);
-          if (Array.isArray(p.descricaoProblema)) {
-              p.descricaoProblema.forEach(prob => {
-                  const cb = $(`input[name="problema"][value="${prob}"]`);
-                  if (cb) cb.checked = true;
-              });
-          }
-          
-          if (p.descricaoProblemaOutro) {
-              problemaOutroCheckbox.checked = true;
-              descricaoProblemaOutroTextarea.value = p.descricaoProblemaOutro;
-              descricaoProblemaOutroTextarea.classList.remove('hidden');
-          }
+          const tipo = p.tipoRegistro || (p.houveParada ? 'parada' : 'sem_parada');
+          $('input[name="tipoRegistro"][value="'+tipo+'"]').checked = true;
 
-          $("#inicioParada").value = fromISOToDatetimeLocal(p.inicioParada);
-          $("#fimParada").value = fromISOToDatetimeLocal(p.fimParada);
-          calcularDuracaoModal();
+          if(tipo !== 'sem_parada'){
+            camposRegistro.classList.remove("hidden");
+            detalhesParada.classList.toggle("hidden", tipo === "complementar");
+
+            $("#inicioParada").value = fromISOToDatetimeLocal(p.inicioParada);
+            $("#fimParada").value = fromISOToDatetimeLocal(p.fimParada);
+            calcularDuracaoModal();
+
+            if(tipo === 'parada'){
+              $("#codParada").value = p.codParada || "";
+              $("#horimetroInicial").value = p.horimetroInicial || "";
+              $("#horimetroFinal").value = p.horimetroFinal || "";
+              $("#equipamentoProblemaModal").value = p.equipamentoProblema || "";
+              $("#descricaoParadaCodigoSelect").value = p.descricaoParadaCodigo || "";
+              
+              $$('input[name="problema"]').forEach(cb => cb.checked = false);
+              if (Array.isArray(p.descricaoProblema)) {
+                  p.descricaoProblema.forEach(prob => {
+                      const cb = $(`input[name="problema"][value="${prob}"]`);
+                      if (cb) cb.checked = true;
+                  });
+              }
+              
+              if (p.descricaoProblemaOutro) {
+                  problemaOutroCheckbox.checked = true;
+                  descricaoProblemaOutroTextarea.value = p.descricaoProblemaOutro;
+                  descricaoProblemaOutroTextarea.classList.remove('hidden');
+              }
+            }
+          }
       } else {
           const now = new Date(); now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
           const in30 = new Date(now); in30.setMinutes(in30.getMinutes() + 30);
@@ -1226,18 +1265,37 @@ async function carregarParaEdicao(id) {
         itens.forEach(p => {
             const linha = document.createElement("div");
             const durh = p.duracaoHoras != null ? Number(p.duracaoHoras).toFixed(2) : "-";
-            
-            const descricoes = Array.isArray(p.descricaoProblema) && p.descricaoProblema.length > 0
-                ? p.descricaoProblema.join(', ')
-                : "N/A";
+            const tipo = p.tipoRegistro || (p.houveParada ? 'parada' : 'sem_parada');
 
-            let problemaHTML = `<div><strong>Cód. Parada:</strong> ${p.descricaoParadaCodigo || "-"}</div>`;
-            problemaHTML += `<div><strong>Problema(s):</strong> ${descricoes}</div>`;
+            let tipoLabel = '';
+            if (tipo === 'parada') tipoLabel = '<strong class="text-red-600">Parada</strong>';
+            else if (tipo === 'complementar') tipoLabel = '<strong class="text-cyan-600">Irrigação Complementar</strong>';
+            else tipoLabel = '<strong>Operação Normal</strong>';
 
-            if (p.descricaoProblemaOutro) {
-                problemaHTML += `<div><strong>Outro:</strong> ${p.descricaoProblemaOutro}</div>`;
+            let detalhesHTML = '';
+            if (tipo === 'parada') {
+              const descricoes = Array.isArray(p.descricaoProblema) && p.descricaoProblema.length > 0
+                  ? p.descricaoProblema.join(', ') : "N/A";
+              let problemaHTML = `<div><strong>Cód. Parada:</strong> ${p.descricaoParadaCodigo || "-"}</div>`;
+              problemaHTML += `<div><strong>Problema(s):</strong> ${descricoes}</div>`;
+              if (p.descricaoProblemaOutro) {
+                  problemaHTML += `<div><strong>Outro:</strong> ${p.descricaoProblemaOutro}</div>`;
+              }
+              detalhesHTML = `
+                <div><strong>Equip.:</strong> ${p.codParada || "-"} ${p.equipamentoProblema ? "• " + p.equipamentoProblema : ""}</div>
+                ${problemaHTML}
+                <div><strong>Início:</strong> ${formatDateTime(p.inicioParada)} • <strong>Fim:</strong> ${formatDateTime(p.fimParada)}</div>
+                <div><strong>Duração:</strong> ${durh} h</div>
+                <div><strong>Horímetro Inicial:</strong> ${p.horimetroInicial || "-"}</div>
+                <div><strong>Horímetro Final:</strong> ${p.horimetroFinal || "-"}</div>
+              `;
+            } else if (tipo === 'complementar') {
+               detalhesHTML = `
+                <div><strong>Início:</strong> ${formatDateTime(p.inicioParada)} • <strong>Fim:</strong> ${formatDateTime(p.fimParada)}</div>
+                <div><strong>Duração:</strong> ${durh} h</div>
+               `;
             }
-
+            
             const adminButtons = isAdmin ? `
                 <div class="flex gap-2 mt-2">
                     <button class="btnEditarParada text-xs bg-yellow-400 text-white px-2 py-1 rounded" data-parada-id="${p.id}">Editar</button>
@@ -1247,18 +1305,10 @@ async function carregarParaEdicao(id) {
 
             linha.className = "border rounded p-2";
             linha.innerHTML = `
-              <div><strong>Houve:</strong> ${p.houveParada ? "Sim" : "Não"}</div>
-              ${p.houveParada ? `
-                <div><strong>Equip.:</strong> ${p.codParada || "-"} ${p.equipamentoProblema ? "• " + p.equipamentoProblema : ""}</div>
-                ${problemaHTML}
-                <div><strong>Início:</strong> ${formatDateTime(p.inicioParada)} • <strong>Fim:</strong> ${formatDateTime(p.fimParada)}</div>
-                <div><strong>Duração:</strong> ${durh} h</div>
-                
-                <div><strong>Horímetro Inicial:</strong> ${p.horimetroInicial || "-"}</div>
-                <div><strong>Horímetro Final:</strong> ${p.horimetroFinal || "-"}</div>
-                ${adminButtons}
-              ` : ``}
+              <div><strong>Tipo:</strong> ${tipoLabel}</div>
+              ${detalhesHTML}
               <div class="text-xs text-gray-500"><em>Registrado:</em> ${p.createdAt?.seconds ? new Date(p.createdAt.seconds*1000).toLocaleString("pt-BR") : "-"}</div>
+               ${adminButtons}
             `;
             frag.appendChild(linha);
         });
@@ -1287,14 +1337,14 @@ async function carregarParaEdicao(id) {
     }
 
     async function excluirParada(areaId, paradaId) {
-        if (!confirm("Tem certeza que deseja excluir este registro de parada?")) return;
+        if (!confirm("Tem certeza que deseja excluir este registro?")) return;
         try {
             const paradaRef = doc(db, COLLECTION, areaId, "paradas", paradaId);
             await deleteDoc(paradaRef);
-            showMessage("Registro de parada excluído com sucesso.");
+            showMessage("Registro excluído com sucesso.");
             carregarHistoricoParadas(areaId, filtroDataOperador.value);
         } catch (e) {
-            console.error("Erro ao excluir parada:", e);
+            console.error("Erro ao excluir registro:", e);
             showMessage("Erro ao excluir o registro.", "error");
         }
     }
@@ -1302,69 +1352,83 @@ async function carregarParaEdicao(id) {
     function existeSobreposicao(registros, novoInicioIso, novoFimIso, idSendoEditado) {
       const ni = new Date(novoInicioIso).getTime(); const nf = new Date(novoFimIso).getTime();
       return registros.some(r => {
-        if (r.id === idSendoEditado) return false; // Não comparar com ele mesmo
-        if (!r.houveParada) return false;
+        if (r.id === idSendoEditado) return false; 
+        if (!r.inicioParada) return false;
         const ri = new Date(r.inicioParada).getTime(); const rf = new Date(r.fimParada).getTime();
         return ni < rf && nf > ri;
       });
     }
+
     formParada.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!areaAtual?.id) return showMessage("Área inválida para registro.", "error");
-      const houveRad = formParada.querySelector('input[name="houveParadaModal"]:checked');
-      if (!houveRad) return showMessage("Informe se houve parada.", "error");
-      const houve = houveRad.value === "sim";
-      let payload = { houveParada: houve, createdAt: serverTimestamp() };
-      if (houve) {
-        const codParada = $("#codParada").value;
-        const descricaoCodigo = $("#descricaoParadaCodigoSelect").value;
-        const inicio = $("#inicioParada").value; const fim = $("#fimParada").value;
-        const horimetroInicial = $("#horimetroInicial").value.trim();const horimetroFinal = $("#horimetroFinal").value.trim();
-        const di = new Date(inicio), df = new Date(fim);
-
-        const descricoesSelecionadas = Array.from($$('input[name="problema"]:checked')).map(cb => cb.value);
-        const descricaoOutro = problemaOutroCheckbox.checked ? descricaoProblemaOutroTextarea.value.trim() : "";
-
-        if (!codParada || !descricaoCodigo || isNaN(di) || isNaN(df) || df <= di) return showMessage("Verifique tipo de equipamento, código da parada e horários.", "error");
-        if (descricoesSelecionadas.length === 0 && !descricaoOutro) return showMessage("Selecione ao menos um problema ou descreva em 'Outro'.", "error");
-
-        const inicioIso = toISOFromDatetimeLocal(inicio); const fimIso = toISOFromDatetimeLocal(fim);
-        const historico = await carregarHistoricoParadas(areaAtual.id, $("#filtroDataOperador").value);
-        if (existeSobreposicao(historico, inicioIso, fimIso, editParadaId)) { 
-            overlapAlert.classList.remove("hidden"); 
-            return; 
-        } else { 
-            overlapAlert.classList.add("hidden"); 
-        }
-        const durHoras = (df - di) / 3600000;
-        payload = { 
-            ...payload, 
-            codParada, 
-            descricaoParadaCodigo: descricaoCodigo,
-            descricaoProblema: descricoesSelecionadas,
-            descricaoProblemaOutro: descricaoOutro,
-            equipamentoProblema: $("#equipamentoProblemaModal").value.trim(), 
-            inicioParada: inicioIso, 
-            fimParada: fimIso, 
-            duracaoHoras: Number(durHoras.toFixed(2)),
-            horimetroInicial: horimetroInicial || null,
-            horimetroFinal: horimetroFinal || null, 
-        };
-      }
-      try {
-        if (editParadaId) {
-            const paradaRef = doc(db, COLLECTION, areaAtual.id, "paradas", editParadaId);
-            await updateDoc(paradaRef, payload);
-            showMessage("Parada atualizada com sucesso!");
-        } else {
-            const subRef = collection(doc(db, COLLECTION, areaAtual.id), "paradas");
-            await addDoc(subRef, payload);
-            showMessage("Parada registrada com sucesso!");
-        }
+        e.preventDefault();
+        if (!areaAtual?.id) return showMessage("Área inválida para registro.", "error");
         
-        fecharModal();
+        const tipoRegistro = formParada.querySelector('input[name="tipoRegistro"]:checked').value;
+        let payload = { createdAt: serverTimestamp(), tipoRegistro };
 
-      } catch (e) { console.error(e); showMessage("Erro ao salvar parada.", "error"); }
+        if (tipoRegistro === 'sem_parada') {
+            payload.houveParada = false;
+        } else { // 'parada' ou 'complementar'
+            const inicio = $("#inicioParada").value;
+            const fim = $("#fimParada").value;
+            const di = new Date(inicio);
+            const df = new Date(fim);
+
+            if (isNaN(di) || isNaN(df) || df <= di) return showMessage("Verifique os horários de início e término.", "error");
+            
+            const inicioIso = toISOFromDatetimeLocal(inicio);
+            const fimIso = toISOFromDatetimeLocal(fim);
+            const historico = await carregarHistoricoParadas(areaAtual.id, $("#filtroDataOperador").value);
+            if (existeSobreposicao(historico, inicioIso, fimIso, editParadaId)) {
+                overlapAlert.classList.remove("hidden");
+                return;
+            } else {
+                overlapAlert.classList.add("hidden");
+            }
+
+            const durHoras = (df - di) / 3600000;
+            payload = {
+                ...payload,
+                houveParada: tipoRegistro === 'parada',
+                inicioParada: inicioIso,
+                fimParada: fimIso,
+                duracaoHoras: Number(durHoras.toFixed(2)),
+            };
+
+            if (tipoRegistro === 'parada') {
+                const codParada = $("#codParada").value;
+                const descricaoCodigo = $("#descricaoParadaCodigoSelect").value;
+                const descricoesSelecionadas = Array.from($$('input[name="problema"]:checked')).map(cb => cb.value);
+                const descricaoOutro = problemaOutroCheckbox.checked ? descricaoProblemaOutroTextarea.value.trim() : "";
+                
+                if (!codParada || !descricaoCodigo) return showMessage("Verifique tipo de equipamento e código da parada.", "error");
+                if (descricoesSelecionadas.length === 0 && !descricaoOutro) return showMessage("Selecione ao menos um problema ou descreva em 'Outro'.", "error");
+
+                payload = {
+                    ...payload,
+                    codParada,
+                    descricaoParadaCodigo: descricaoCodigo,
+                    descricaoProblema: descricoesSelecionadas,
+                    descricaoProblemaOutro: descricaoOutro,
+                    equipamentoProblema: $("#equipamentoProblemaModal").value.trim(),
+                    horimetroInicial: $("#horimetroInicial").value.trim() || null,
+                    horimetroFinal: $("#horimetroFinal").value.trim() || null,
+                };
+            }
+        }
+
+        try {
+            if (editParadaId) {
+                const paradaRef = doc(db, COLLECTION, areaAtual.id, "paradas", editParadaId);
+                await updateDoc(paradaRef, payload);
+                showMessage("Registro atualizado com sucesso!");
+            } else {
+                const subRef = collection(doc(db, COLLECTION, areaAtual.id), "paradas");
+                await addDoc(subRef, payload);
+                showMessage("Registro salvo com sucesso!");
+            }
+            fecharModal();
+        } catch (e) { console.error(e); showMessage("Erro ao salvar registro.", "error"); }
     });
 
 
@@ -1375,9 +1439,19 @@ async function carregarParaEdicao(id) {
         const qy = query(ref,  where("inicioParada", ">=", `${ymd}T00:00:00`),  where("inicioParada", "<=", `${ymd}T23:59:59`));
         const snap = await getDocs(qy);
         if (snap.empty) return "sem_registro";
+        
         let comParada = false;
-        snap.forEach(s => { if (s.data().houveParada) comParada = true; });
-        return comParada ? "com_parada" : "sem_parada";
+        let comComplementar = false;
+        snap.forEach(s => { 
+            const data = s.data();
+            if (data.houveParada) comParada = true; 
+            if (data.tipoRegistro === 'complementar') comComplementar = true;
+        });
+
+        if(comParada) return "com_parada";
+        if(comComplementar) return "com_complementar";
+        return "sem_parada"; // Registros existem, mas nenhum é parada ou complementar
+
       } catch (e) { console.error("status dia erro:", e); return "sem_registro"; }
     }
 
@@ -1423,7 +1497,7 @@ async function carregarParaEdicao(id) {
                 bombeamento: area.bombeamento || "",
                 numeroEletrobomba: area.numeroEletrobomba || "",
                 numeroCarretel: area.numeroCarretel || "",
-                descricaoCompletaParada: "Não houve parada",
+                descricaoCompletaParada: "Sem registro de atividade",
                 //... outros campos da área
             });
         } else {
@@ -1431,9 +1505,13 @@ async function carregarParaEdicao(id) {
               const dados = p.data();
               const descricaoProblemas = (Array.isArray(dados.descricaoProblema) ? dados.descricaoProblema.join('; ') : '');
               const descricaoOutro = dados.descricaoProblemaOutro ? `; Outro: ${dados.descricaoProblemaOutro}` : '';
-              const descricaoCompleta = dados.houveParada 
-                ? `${dados.descricaoParadaCodigo || ''} (${descricaoProblemas}${descricaoOutro})`
-                : "Não houve parada";
+              
+              let descricaoCompleta = "Operação Normal";
+              if(dados.tipoRegistro === 'parada'){
+                descricaoCompleta = `PARADA: ${dados.descricaoParadaCodigo || ''} (${descricaoProblemas}${descricaoOutro})`;
+              } else if (dados.tipoRegistro === 'complementar') {
+                descricaoCompleta = "IRRIGAÇÃO COMPLEMENTAR";
+              }
               
               all.push({
                 projeto: area.projeto || "",
@@ -1538,7 +1616,7 @@ async function carregarParaEdicao(id) {
 
       const linhas = [];
       let totalPlan = 0, totalPar = 0, totalMetrosPlano = 0, totalMetrosReal = 0;
-      let totalHectaresPlano = 0, totalHectaresReal = 0, totalMetrosHorimetro = 0;
+      let totalHectaresPlano = 0, totalHectaresReal = 0, totalMetrosHorimetro = 0, totalComplementar = 0;
 
       for (const area of areas){
         const ref = collection(doc(db, COLLECTION, area.id), "paradas");
@@ -1549,9 +1627,11 @@ async function carregarParaEdicao(id) {
         const snap = await getDocs(qy);
         let horasParadas = 0;
         let horasHorimetro = 0;
+        let horasComplementar = 0;
         snap.forEach(s=>{
           const p = s.data();
           if (p.houveParada && p.duracaoHoras) horasParadas += Number(p.duracaoHoras)||0;
+          if (p.tipoRegistro === 'complementar' && p.duracaoHoras) horasComplementar += Number(p.duracaoHoras) || 0;
           if (p.horimetroFinal && p.horimetroInicial) {
               horasHorimetro += (Number(String(p.horimetroFinal).replace(',','.')) - Number(String(p.horimetroInicial).replace(',','.')));
           }
@@ -1559,11 +1639,12 @@ async function carregarParaEdicao(id) {
 
         const planejadas = Number(area.horasPlanejadas||0);
         const rodadas = Math.max(0, planejadas - horasParadas);
+        const horasEfetivasIrrigacao = Math.max(0, rodadas - horasComplementar);
         const efic = planejadas > 0 ? (rodadas/planejadas)*100 : 0;
         
         const velocidade = Number(area.velocidadeCarretel || 0);
         const metrosPlano = Number(area.metrosLineares || 0);
-        const metrosReal = rodadas * velocidade;
+        const metrosReal = horasEfetivasIrrigacao * velocidade;
         const metrosRealHorimetro = horasHorimetro * velocidade;
         const hectaresPlano = metrosPlano * fatorCarreador;
         const hectaresReal = metrosReal * fatorCarreador;
@@ -1571,6 +1652,7 @@ async function carregarParaEdicao(id) {
 
         totalPlan += planejadas;
         totalPar += horasParadas;
+        totalComplementar += horasComplementar;
         totalMetrosPlano += metrosPlano;
         totalMetrosReal += metrosReal;
         totalHectaresPlano += hectaresPlano;
@@ -1587,6 +1669,7 @@ async function carregarParaEdicao(id) {
           carretel: area.numeroCarretel || "",
           horasPlanejadas: planejadas.toFixed(2),
           horasParadas: horasParadas.toFixed(2),
+          horasComplementar: horasComplementar.toFixed(2),
           horasRodadas: rodadas.toFixed(2),
           eficiencia: `${efic.toFixed(1)}%`,
           metrosLinearesPlano: metrosPlano.toFixed(2),
@@ -1605,7 +1688,7 @@ async function carregarParaEdicao(id) {
           totalPlan, totalPar, rodadasTot, eficTot, 
           totalMetrosPlano, totalMetrosReal, 
           totalHectaresPlano, totalHectaresReal,
-          totalMetrosHorimetro
+          totalMetrosHorimetro, totalComplementar
         },
         linhas
       };
@@ -1621,6 +1704,7 @@ async function carregarParaEdicao(id) {
       const sumHectaresPlanoEl = $("#sumHectaresPlano");
       const sumHectaresRealEl = $("#sumHectaresReal");
       const sumMetrosHorimetroEl = $("#sumMetrosHorimetro");
+      const sumComplementarEl = $("#sumComplementar");
       const tabelaRel = $("#tabelaRel");
 
       tabelaRel.innerHTML = `<div class="text-sm text-gray-600">Calculando...</div>`;
@@ -1635,6 +1719,7 @@ async function carregarParaEdicao(id) {
       sumHectaresPlanoEl.textContent = sum.totalHectaresPlano.toFixed(2);
       sumHectaresRealEl.textContent = sum.totalHectaresReal.toFixed(2);
       sumMetrosHorimetroEl.textContent = sum.totalMetrosHorimetro.toFixed(2);
+      sumComplementarEl.textContent = sum.totalComplementar.toFixed(2);
 
       if (!linhas.length){
         tabelaRel.innerHTML = `<div class="text-sm text-gray-600">Sem dados para os filtros.</div>`;
@@ -1643,7 +1728,7 @@ async function carregarParaEdicao(id) {
 
       const table = document.createElement("div");
       table.className = "overflow-auto";
-      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","H. Plan","H. Par","H. Rod","Efic.", "ML Plan (m)", "ML Real (m)", "HA Plan (ha)", "HA Real (ha)"];
+      const headers = ["Croqui", "Projeto","Bloco","Bombeamento","Eletrobomba","Carretel","H. Plan","H. Par", "H. Compl.", "H. Rod","Efic.", "ML Plan (m)", "ML Real (m)", "HA Plan (ha)", "HA Real (ha)"];
       const thead = `<thead><tr>${headers.map(h=>`<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
       const tbody = `<tbody>${linhas.map(l=>`
         <tr class="hover:bg-gray-50">
@@ -1655,6 +1740,7 @@ async function carregarParaEdicao(id) {
           <td class="px-3 py-2 text-sm">${l.carretel}</td>
           <td class="px-3 py-2 text-sm">${l.horasPlanejadas}</td>
           <td class="px-3 py-2 text-sm text-amber-800">${l.horasParadas}</td>
+          <td class="px-3 py-2 text-sm text-sky-800">${l.horasComplementar}</td>
           <td class="px-3 py-2 text-sm text-emerald-800">${l.horasRodadas}</td>
           <td class="px-3 py-2 text-sm font-semibold">${l.eficiencia}</td>
           <td class="px-3 py-2 text-sm">${l.metrosLinearesPlano}</td>
@@ -1714,64 +1800,44 @@ async function carregarParaEdicao(id) {
 
         let horasParadas = 0;
         let horasHorimetro = 0;
+        let horasComplementar = 0;
         const paradasTabela = [];
 
         snap.forEach(s => {
             const p = s.data();
-            if (p.houveParada && p.duracaoHoras) {
-                horasParadas += Number(p.duracaoHoras) || 0;
-            }
-             if (p.horimetroFinal && p.horimetroInicial) {
+            const tipo = p.tipoRegistro || (p.houveParada ? 'parada' : 'sem_parada');
+
+            if (p.houveParada && p.duracaoHoras) horasParadas += Number(p.duracaoHoras) || 0;
+            if (tipo === 'complementar' && p.duracaoHoras) horasComplementar += Number(p.duracaoHoras) || 0;
+            
+            if (p.horimetroFinal && p.horimetroInicial) {
                 horasHorimetro += (Number(String(p.horimetroFinal).replace(',','.')) - Number(String(p.horimetroInicial).replace(',','.')));
             }
-            if(p.houveParada){
-                paradasTabela.push({
-                    houveParada: "Sim",
-                    tipoEquipamento: p.codParada,
-                    problema: (Array.isArray(p.descricaoProblema) ? p.descricaoProblema.join(', ') : '') + (p.descricaoProblemaOutro ? ` (Outro: ${p.descricaoProblemaOutro})` : ''),
-                    inicio: formatDateTime(p.inicioParada),
-                    fim: formatDateTime(p.fimParada),
-                    duracao: (Number(p.duracaoHoras) || 0).toFixed(2),
-                    horimetroInicial: p.horimetroInicial || "-",
-                    horimetroFinal: p.horimetroFinal || "-",
-                    descricaoCompleta: p.descricaoParadaCodigo || ""
-                });
-            } else {
-                 paradasTabela.push({
-                    houveParada: "Não",
-                    tipoEquipamento: "-",
-                    problema: "-",
-                    inicio: "-",
-                    fim: "-",
-                    duracao: "-",
-                    horimetroInicial: "-",
-                    horimetroFinal: "-",
-                    descricaoCompleta: "Não houve parada"
-                });
-            }
+
+            let tipoLabel = "Op. Normal";
+            if (tipo === 'parada') tipoLabel = "Parada";
+            if (tipo === 'complementar') tipoLabel = "Irrig. Compl.";
+            
+            paradasTabela.push({
+                tipoRegistro: tipoLabel,
+                problema: (Array.isArray(p.descricaoProblema) ? p.descricaoProblema.join(', ') : '') + (p.descricaoProblemaOutro ? ` (Outro: ${p.descricaoProblemaOutro})` : '-'),
+                inicio: formatDateTime(p.inicioParada),
+                fim: formatDateTime(p.fimParada),
+                duracao: (Number(p.duracaoHoras) || 0).toFixed(2),
+                horimetroInicial: p.horimetroInicial || "-",
+                horimetroFinal: p.horimetroFinal || "-",
+                descricaoCompleta: p.descricaoParadaCodigo || "-"
+            });
         });
 
-        if (snap.empty) {
-            paradasTabela.push({
-                houveParada: "Não",
-                tipoEquipamento: "-",
-                problema: "-",
-                inicio: "-",
-                fim: "-",
-                duracao: "-",
-                horimetroInicial: "-",
-                horimetroFinal: "-",
-                descricaoCompleta: "Não houve parada"
-            });
-        }
-        
         const planejadas = Number(area.horasPlanejadas || 0);
         const rodadas = Math.max(0, planejadas - horasParadas);
+        const horasEfetivasIrrigacao = Math.max(0, rodadas - horasComplementar);
         const efic = planejadas > 0 ? (rodadas / planejadas) * 100 : 0;
 
         const velocidade = Number(area.velocidadeCarretel || 0);
         const metrosPlano = Number(area.metrosLineares || 0);
-        const metrosReal = rodadas * velocidade;
+        const metrosReal = horasEfetivasIrrigacao * velocidade;
         const metrosRealHorimetro = horasHorimetro * velocidade;
         const hectaresPlano = metrosPlano * fatorCarreador;
         const hectaresReal = metrosReal * fatorCarreador;
@@ -1786,21 +1852,21 @@ async function carregarParaEdicao(id) {
         $("#sumHectaresPlanoInd").textContent = hectaresPlano.toFixed(2);
         $("#sumHectaresRealInd").textContent = hectaresReal.toFixed(2);
         $("#sumMetrosHorimetroInd").textContent = metrosRealHorimetro.toFixed(2);
+        $("#sumComplementarInd").textContent = horasComplementar.toFixed(2);
 
 
         // Gera a tabela de paradas
         if (!paradasTabela.length) {
-            tabelaInd.innerHTML = `<div class="text-sm text-gray-600">Nenhum registro de parada para o dia.</div>`;
+            tabelaInd.innerHTML = `<div class="text-sm text-gray-600">Nenhum registro de atividade para o dia.</div>`;
             return;
         }
         const table = document.createElement("div");
         table.className = "overflow-auto";
-        const headers = ["Houve?", "Tipo Equip.", "Problema", "Início", "Fim", "Duração (h)", "Horímetro Inicial", "Horímetro Final", "Descrição Completa"];
+        const headers = ["Tipo Registro", "Problema", "Início", "Fim", "Duração (h)", "Horímetro Inicial", "Horímetro Final", "Cód. Parada"];
         const thead = `<thead><tr>${headers.map(h => `<th class="px-3 py-2 border-b bg-gray-50 text-left text-sm font-semibold">${h}</th>`).join("")}</tr></thead>`;
         const tbody = `<tbody>${paradasTabela.map(p => `
             <tr class="hover:bg-gray-50">
-                <td class="px-3 py-2 text-sm">${p.houveParada}</td>
-                <td class="px-3 py-2 text-sm">${p.tipoEquipamento}</td>
+                <td class="px-3 py-2 text-sm">${p.tipoRegistro}</td>
                 <td class="px-3 py-2 text-sm">${p.problema}</td>
                 <td class="px-3 py-2 text-sm">${p.inicio}</td>
                 <td class="px-3 py-2 text-sm">${p.fim}</td>
