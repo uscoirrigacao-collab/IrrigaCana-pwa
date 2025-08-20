@@ -1,6 +1,6 @@
 {
-  "name": "IrrigaCana • Cadastro & Operação",
-  "short_name": "IrrigaCana",
+  "name": "InfoCana - Cadastro & Operação",
+  "short_name": "InfoCana",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
