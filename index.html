@@ -10,7 +10,28 @@
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"> </script>
   <style>.tab-btn.active {border-color: #2563eb; /* Azul principal */color: #2563eb;font-weight: 600;}.tab-btn {
-   transition: all 0.2s ease-in-out;}.aba-bloqueada {opacity: 0.5;pointer-events: none;cursor: not-allowed;}#menuAbas {opacity: 0;transform: scaleY(0.95);transform-origin: top right;}#menuAbas.show {opacity: 1;transform: scaleY(1);}
+   transition: all 0.2s ease-in-out;}.aba-bloqueada {opacity: 0.5;pointer-events: none;cursor: not-allowed;}#menuAbas {opacity: 0;transform: scaleY(0.95);transform-origin: top right;}#menuAbas.show {opacity: 1;transform: scaleY(1);}.menu-icon .bar {
+  left: 0;
+}
+
+.menu-icon.open .bar:nth-child(1) {
+  transform: rotate(45deg);
+  top: 12px;
+}
+
+.menu-icon.open .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-icon.open .bar:nth-child(3) {
+  transform: rotate(-45deg);
+  top: 12px;
+}
+
+
+
+
+
 </style>
 
 </head>
@@ -19,6 +40,11 @@
 <body class="bg-gray-100 min-h-screen flex flex-col items-center py-8 px-4 font-sans text-gray-800">
 
   <main class="w-full max-w-6xl">
+    <header class="flex items-center justify-between mb-6 pb-4 border-b border-gray-200">
+      <h1 class="text-2xl font-bold text-orange-600">InfoCana • USCO</h1>
+      <button id="btnDesbloquear" class="bg-blue-600 text-white px-3 py-2 rounded hover:bg-blue-700">Admin</button>
+    </header>
+
     <div id="mensagem" class="hidden p-3 rounded mb-4"></div>
 
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
@@ -29,12 +55,10 @@
       <div class="text-xs text-gray-500">
         As alterações feitas <strong>offline</strong> serão sincronizadas automaticamente ao restabelecer a conexão.
       </div>
-      <button id="btnDesbloquear" class="bg-blue-600 text-white px-2 py-2 rounded hover:bg-blue-700">Admin</button>
     </div>
     
 
-<div class="border-b border-gray-200 mb-6 flex items-center justify-between">
-  <!-- Abas visíveis em desktop -->
+<div id="navContainer" class="border-b border-gray-200 mb-6 flex items-center justify-between">
   <nav class="-mb-px hidden md:flex space-x-6" aria-label="Tabs">
     <button data-tab="projetos"
       class="tab-btn aba-bloqueada flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
@@ -57,36 +81,23 @@
     </button>
   </nav>
 
-  <!-- Menu mobile -->
   <div class="relative md:hidden ml-auto">
-     <button id="menuAbasBtn"
-       class="flex items-center gap-2 py-3 px-4 text-gray-500 hover:text-blue-600">
-      <!-- Ícone menu 3 barrinhas -->
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-       </svg>
+    <button id="menuAbasBtn" class="flex items-center gap-2 py-3 px-4 text-gray-700 hover:text-blue-600 font-medium">
+      <span id="menuAbasLabel"></span> <div class="menu-icon w-6 h-6 relative">
+        <span class="bar absolute top-1 w-6 h-0.5 bg-current transition-all duration-300"></span>
+        <span class="bar absolute top-3 w-6 h-0.5 bg-current transition-all duration-300"></span>
+        <span class="bar absolute top-5 w-6 h-0.5 bg-current transition-all duration-300"></span>
+      </div>
     </button>
 
-    <div id="menuAbas" class="hidden absolute right-0 mt-2 w-52 bg-white border rounded shadow-lg z-20">
-      <button data-tab="projetos"
-        class="tab-btn aba-bloqueada block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
-        📂 Projetos
-      </button>
-      <button data-tab="cadastro"
-        class="tab-btn aba-bloqueada block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
-        📝 Cadastro de Áreas
-      </button>
-      <button data-tab="relatorios"
-        class="tab-btn aba-bloqueada block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
-        📊 Relatórios
-      </button>
-    </div>
+    <div id="menuAbas" class="hidden absolute right-0 mt-2 w-56 bg-white border rounded shadow-lg z-20">
+      </div>
   </div>
 </div>
 
       <section id="content-projetos" class="p-6 hidden space-y-6">
-        <h1 class="text-2xl md:text-3xl font-semibold text-blue-900">Projetos</h1>
-        <p class="text-sm text-gray-600">Gerencie os nomes dos projetos. (Armazenados no documento <code>Projeto/6YqsO6D3ATYKiBNvuP9s</code>)</p>
+        <h1 class="text-2xl md:text-3xl font-semibold text-orange-600">Projetos</h1>
+        <p class="text-sm text-gray-600">Gerencie os projetos, insira ou remova.</p>
 
         <form id="formProjeto" class="flex gap-2 items-end">
           <div class="flex-1">
@@ -102,8 +113,8 @@
         </div>
       </section>
 
-      <section id="content-cadastro" class="p-6 space-y-6">
-        <h1 class="text-2xl md:text-3xl font-semibold text-blue-900">Cadastro de Áreas</h1>
+      <section id="content-cadastro" class="p-6 hidden space-y-6">
+        <h1 class="text-2xl md:text-3xl font-semibold text-orange-600">Cadastro de Áreas</h1>
 
         <form id="formArea" class="space-y-6" novalidate>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -204,7 +215,7 @@
       <section id="content-operador" class="p-6 hidden space-y-6">
         <div class="flex flex-col md:flex-row md:items-end gap-4">
           <div class="flex-1">
-            <h2 class="text-2xl md:text-3xl font-semibold text-blue-900">Áreas Cadastradas (Operador)</h2>
+            <h2 class="text-2xl md:text-3xl font-semibold text-orange-600">Operador</h2>
           </div>
           <div class="flex gap-2">
 
@@ -235,7 +246,7 @@
       <section id="content-relatorios" class="p-6 hidden space-y-6">
         <div class="flex flex-col md:flex-row md:items-end gap-4">
           <div class="flex-1">
-            <h2 class="text-2xl md:text-3xl font-semibold text-blue-900">Relatórios</h2>
+            <h2 class="text-2xl md:text-3xl font-semibold text-orange-600">Relatórios</h2>
             <p class="text-sm text-gray-600">Consolidação diária por projeto e por área.</p>
           </div>
           <div class="flex gap-2">
@@ -629,47 +640,89 @@
     const listaAreasOperador = $("#listaAreasOperador");
     const filtroDataOperador = $("#filtroDataOperador");
     const filtroDataRel = $("#filtroDataRel");
-    // NOVO
     const filtroAreaIndividual = $("#filtroAreaIndividual");
     
-    const tabBtns = $$(".tab-btn");
+    // --- LÓGICA DE NAVEGAÇÃO E ABAS (MODIFICADA) ---
+    const navContainer = $("#navContainer");
+    const menuBtn = $("#menuAbasBtn");
+    const menu = $("#menuAbas");
+    const menuIcon = menuBtn.querySelector(".menu-icon");
+    const desktopTabButtons = $$('nav[aria-label="Tabs"] > .tab-btn');
 
-const menuBtn = document.getElementById("menuAbasBtn");
-const menu = document.getElementById("menuAbas");
+    // Abre/Fecha o menu mobile
+    menuBtn.addEventListener("click", () => {
+      menu.classList.toggle("hidden");
+      requestAnimationFrame(() => {
+        menu.classList.toggle("show");
+        menuIcon.classList.toggle("open");
+      });
+    });
 
-menuBtn.addEventListener("click", () => {
-  menu.classList.toggle("hidden");
-  // pequena espera para permitir transição
-  requestAnimationFrame(() => {
-    menu.classList.toggle("show");
-  });
-});
+    // Fecha o menu ao clicar fora
+    document.addEventListener("click", (e) => {
+      if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
+        menu.classList.remove("show");
+        menuIcon.classList.remove("open");
+        setTimeout(() => menu.classList.add("hidden"), 200);
+      }
+    });
 
-// Fecha ao clicar fora
-document.addEventListener("click", (e) => {
-  if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
-    menu.classList.remove("show");
-    setTimeout(() => menu.classList.add("hidden"), 200); // espera animação terminar
-  }
-});
+    // Função para atualizar o menu mobile dinamicamente
+    function atualizarMenuMobile(activeTabName) {
+        const menuContainer = $("#menuAbas");
+        const menuLabel = $("#menuAbasLabel");
+        let menuHTML = '';
+        let activeLabelHTML = '';
 
-function switchTab(name) {
-  Object.entries(sections).forEach(([k, sec]) => {
-    if (k === name) sec.classList.remove("hidden");
-    else sec.classList.add("hidden");
-  });
-  tabBtns.forEach(btn => {
-    if (btn.dataset.tab === name) {
-      btn.classList.add("active");
-    } else {
-      btn.classList.remove("active");
+        desktopTabButtons.forEach(btn => {
+            const tabName = btn.dataset.tab;
+            const isBloqueada = btn.classList.contains('aba-bloqueada');
+            const btnContent = btn.innerHTML;
+
+            if (tabName === activeTabName) {
+                activeLabelHTML = btnContent;
+            } else {
+                menuHTML += `<button data-tab="${tabName}"
+                    class="tab-btn ${isBloqueada ? 'aba-bloqueada' : ''} block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
+                    ${btnContent}
+                </button>`;
+            }
+        });
+
+        menuLabel.innerHTML = activeLabelHTML;
+        menuContainer.innerHTML = menuHTML;
     }
-  });
-  observarAreas();
-}
+    
+    // Centraliza o evento de clique para todas as abas (desktop e mobile)
+    navContainer.addEventListener('click', (e) => {
+      const tabButton = e.target.closest('.tab-btn');
+      if (tabButton && !tabButton.classList.contains('aba-bloqueada')) {
+        const tabName = tabButton.dataset.tab;
+        switchTab(tabName);
+        // Se a ação veio do menu mobile aberto, fecha ele
+        if (menu.classList.contains('show')) {
+            menu.classList.remove("show");
+            menuIcon.classList.remove("open");
+            setTimeout(() => menu.classList.add("hidden"), 200);
+        }
+      }
+    });
 
-
-    tabBtns.forEach(btn => btn.addEventListener("click", ()=> switchTab(btn.dataset.tab)));
+    function switchTab(name) {
+      // Mostra a seção correta
+      Object.entries(sections).forEach(([k, sec]) => {
+        sec.classList.toggle("hidden", k !== name);
+      });
+      // Atualiza o estado 'active' de todos os botões de aba
+      $$('.tab-btn').forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.tab === name);
+      });
+      
+      // Atualiza o menu mobile
+      atualizarMenuMobile(name);
+      
+      observarAreas();
+    }
     
     let editDocId = null;
     let isSyncing = false;
@@ -693,7 +746,6 @@ function switchTab(name) {
         } catch (e) { console.error("onSnapshot projetos:", e); showMessage("Erro ao observar projetos.", "error"); }
     }, (err) => { console.error("Snapshot projetos falhou:", err); showMessage("Erro ao carregar projetos.", "error"); });
     
-    // 
     function preencherSelectsProjeto() {
         const optsCadastro = ['<option value="">-- Selecione um Projeto --</option>'];
         const optsFiltro = ['<option value="">-- Todos os Projetos --</option>'];
@@ -1797,11 +1849,12 @@ async function carregarParaEdicao(id) {
            }
       }
       function liberarAbas() {
-          const abasBloqueadas = document.querySelectorAll('.aba-bloqueada');
-          abasBloqueadas.forEach(aba => {
+          $$('.aba-bloqueada').forEach(aba => {
             aba.classList.remove('aba-bloqueada');
-            aba.classList.add('hover:text-blue-600');
-        });
+          });
+          // Força a atualização do menu mobile para refletir o estado desbloqueado
+          const activeTab = $('.tab-btn.active')?.dataset.tab || 'operador';
+          atualizarMenuMobile(activeTab);
     }
 
     // ===== Inicialização =====
@@ -1829,12 +1882,12 @@ async function carregarParaEdicao(id) {
         });
     })();
 
-    listarAreasCadastro(); // primeira render
-   // ===== Código para exibir a aba "Operador" por padrão =====
+    listarAreasCadastro(); 
+   
     document.addEventListener('DOMContentLoaded', () => {
-    switchTab('operador');
-    document.getElementById('btnDesbloquear').addEventListener('click', verificarSenha);
-});
+      switchTab('operador');
+      $('#btnDesbloquear').addEventListener('click', verificarSenha);
+    });
   </script>
 </body>
 </html>
