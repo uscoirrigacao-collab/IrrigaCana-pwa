@@ -8,9 +8,9 @@
   <link rel="manifest" href="manifest.json">
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js"> </script>
   <style>.tab-btn.active {border-color: #2563eb; /* Azul principal */color: #2563eb;font-weight: 600;}.tab-btn {
-   transition: all 0.2s ease-in-out;}.aba-bloqueada {opacity: 0.5;pointer-events: none;cursor: not-allowed;}
+   transition: all 0.2s ease-in-out;}.aba-bloqueada {opacity: 0.5;pointer-events: none;cursor: not-allowed;}#menuAbas {opacity: 0;transform: scaleY(0.95);transform-origin: top right;}#menuAbas.show {opacity: 1;transform: scaleY(1);}
 </style>
 
 </head>
@@ -33,44 +33,56 @@
     </div>
     
 
-<div class="border-b border-gray-200 mb-6">
-  <nav class="-mb-px flex space-x-6" aria-label="Tabs">
-    
+<div class="border-b border-gray-200 mb-6 flex items-center justify-between">
+  <!-- Abas visíveis em desktop -->
+  <nav class="-mb-px hidden md:flex space-x-6" aria-label="Tabs">
     <button data-tab="projetos"
       class="tab-btn aba-bloqueada flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
-      </svg>
-      Projetos
+      📂 Projetos
     </button>
 
     <button data-tab="cadastro"
       class="tab-btn aba-bloqueada flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-      </svg>
-      Cadastro de Áreas
+      📝 Cadastro de Áreas
     </button>
 
     <button data-tab="operador"
-      class="tab-btn flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-      </svg>
-      Áreas Cadastradas
+      class="tab-btn flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-blue-600 border-blue-600 active">
+      ✅ Áreas Cadastradas
     </button>
 
     <button data-tab="relatorios"
       class="tab-btn aba-bloqueada flex items-center gap-2 whitespace-nowrap py-3 px-4 border-b-2 font-medium text-sm text-gray-500 hover:text-blue-600 hover:border-blue-300">
-      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-6h13v6H9zM3 7h18M3 17h18" />
-      </svg>
-      Relatórios
+      📊 Relatórios
+    </button>
+  </nav>
+
+  <!-- Menu mobile -->
+  <div class="relative md:hidden ml-auto">
+     <button id="menuAbasBtn"
+       class="flex items-center gap-2 py-3 px-4 text-gray-500 hover:text-blue-600">
+      <!-- Ícone menu 3 barrinhas -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+       </svg>
     </button>
 
-  </nav>
+    <div id="menuAbas" class="hidden absolute right-0 mt-2 w-52 bg-white border rounded shadow-lg z-20">
+      <button data-tab="projetos"
+        class="tab-btn aba-bloqueada block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
+        📂 Projetos
+      </button>
+      <button data-tab="cadastro"
+        class="tab-btn aba-bloqueada block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
+        📝 Cadastro de Áreas
+      </button>
+      <button data-tab="relatorios"
+        class="tab-btn aba-bloqueada block w-full text-left px-4 py-2 text-sm text-gray-600 hover:bg-gray-100">
+        📊 Relatórios
+      </button>
+    </div>
+  </div>
 </div>
-
 
       <section id="content-projetos" class="p-6 hidden space-y-6">
         <h1 class="text-2xl md:text-3xl font-semibold text-blue-900">Projetos</h1>
@@ -622,6 +634,25 @@
     
     const tabBtns = $$(".tab-btn");
 
+const menuBtn = document.getElementById("menuAbasBtn");
+const menu = document.getElementById("menuAbas");
+
+menuBtn.addEventListener("click", () => {
+  menu.classList.toggle("hidden");
+  // pequena espera para permitir transição
+  requestAnimationFrame(() => {
+    menu.classList.toggle("show");
+  });
+});
+
+// Fecha ao clicar fora
+document.addEventListener("click", (e) => {
+  if (!menu.contains(e.target) && !menuBtn.contains(e.target)) {
+    menu.classList.remove("show");
+    setTimeout(() => menu.classList.add("hidden"), 200); // espera animação terminar
+  }
+});
+
 function switchTab(name) {
   Object.entries(sections).forEach(([k, sec]) => {
     if (k === name) sec.classList.remove("hidden");
@@ -636,6 +667,7 @@ function switchTab(name) {
   });
   observarAreas();
 }
+
 
     tabBtns.forEach(btn => btn.addEventListener("click", ()=> switchTab(btn.dataset.tab)));
     
