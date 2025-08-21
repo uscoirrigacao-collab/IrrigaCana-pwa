@@ -463,7 +463,22 @@
         </fieldset>
 
         <div id="camposRegistro" class="hidden space-y-3">
-            <div id="detalhesParada" class="space-y-3">
+            <!-- Campos de Data/Hora (comum para parada e complementar) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div>
+                <label class="block text-sm font-semibold">Início</label>
+                <input id="inicioParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
+              </div>
+              <div>
+                <label class="block text-sm font-semibold">Término</label>
+                <input id="fimParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
+              </div>
+            </div>
+            <div class="text-sm text-gray-700">Duração: <span id="duracaoParada">-</span></div>
+            <div id="alertOverlap" class="hidden text-sm text-red-600">⚠️ O intervalo informado se sobrepõe a um registro existente.</div>
+
+            <!-- Campos específicos para PARADA -->
+            <div id="detalhesParada" class="hidden space-y-3 border-t pt-3 mt-3">
               <div>
                 <label class="block text-sm font-semibold">Tipo de equipamento</label>
                 <select id="codParada" class="w-full border rounded px-3 py-2" required>
@@ -511,20 +526,18 @@
                 </div>
               </div>
             </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div>
-                <label class="block text-sm font-semibold">Início</label>
-                <input id="inicioParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
-              </div>
-              <div>
-                <label class="block text-sm font-semibold">Término</label>
-                <input id="fimParada" type="datetime-local" class="w-full border rounded px-3 py-2" required />
-              </div>
+            
+            <!-- Campos específicos para IRRIGAÇÃO COMPLEMENTAR -->
+            <div id="detalhesComplementar" class="hidden space-y-3 border-t pt-3 mt-3">
+                <p class="text-sm font-medium text-gray-800">Detalhes da Irrigação Complementar</p>
+                <p class="text-xs text-gray-600">Selecione o carretel que foi substituído pelo canhão de espera.</p>
+                <div>
+                    <label class="block text-sm font-semibold">Carretel Substituído</label>
+                    <select id="numeroCarretelComplementar" class="w-full border rounded px-3 py-2">
+                        <option value="">Nenhum (opcional)</option>
+                    </select>
+                </div>
             </div>
-
-            <div class="text-sm text-gray-700">Duração: <span id="duracaoParada">-</span></div>
-            <div id="alertOverlap" class="hidden text-sm text-red-600">⚠️ O intervalo informado se sobrepõe a um registro existente.</div>
         </div>
 
         <div class="flex justify-end gap-3 pt-2">
@@ -1199,6 +1212,7 @@ async function carregarParaEdicao(id) {
     const formParada = $("#formParada");
     const camposRegistro = $("#camposRegistro");
     const detalhesParada = $("#detalhesParada");
+    const detalhesComplementar = $("#detalhesComplementar");
     const duracaoParadaEl = $("#duracaoParada");
     const overlapAlert = $("#alertOverlap");
     const selecaoCarretelParadaDiv = $("#selecaoCarretelParada");
@@ -1207,6 +1221,7 @@ async function carregarParaEdicao(id) {
     let areaAtual = null;
     let editParadaId = null; 
 
+    // MODIFICADO: Lógica para mostrar/esconder seções do modal
     formParada.querySelectorAll('input[name="tipoRegistro"]').forEach(r => {
       r.addEventListener("change", (ev) => {
         const selectedValue = ev.target.value;
@@ -1214,7 +1229,8 @@ async function carregarParaEdicao(id) {
             camposRegistro.classList.add("hidden");
         } else {
             camposRegistro.classList.remove("hidden");
-            detalhesParada.classList.toggle("hidden", selectedValue === "complementar");
+            detalhesParada.classList.toggle("hidden", selectedValue !== "parada");
+            detalhesComplementar.classList.toggle("hidden", selectedValue !== "complementar");
         }
       });
     });
@@ -1265,19 +1281,27 @@ async function carregarParaEdicao(id) {
       descricaoProblemaOutroTextarea.value = '';
       descricaoProblemaOutroTextarea.classList.add('hidden');
       camposRegistro.classList.add("hidden"); 
-      detalhesParada.classList.remove("hidden");
+      detalhesParada.classList.add("hidden");
+      detalhesComplementar.classList.add("hidden");
       duracaoParadaEl.textContent = "-"; 
       overlapAlert.classList.add("hidden");
 
-      // Popula o seletor de carretéis
+      // Popula os seletores de carretéis (para parada e para complementar)
       const selectCarretelParada = $("#numeroCarretelParada");
+      const selectCarretelComplementar = $("#numeroCarretelComplementar");
       selectCarretelParada.innerHTML = '<option value="">Selecione o Carretel</option>';
+      selectCarretelComplementar.innerHTML = '<option value="">Nenhum (opcional)</option>';
+      
       if(Array.isArray(areaDoc.carreteis) && areaDoc.carreteis.length > 0) {
           areaDoc.carreteis.forEach((num, index) => {
-              const option = document.createElement('option');
-              option.value = num;
-              option.textContent = `Carretel ${index + 1}: ${num}`;
-              selectCarretelParada.appendChild(option);
+              const optionParada = document.createElement('option');
+              optionParada.value = num;
+              optionParada.textContent = `Carretel ${index + 1}: ${num}`;
+              
+              const optionComp = optionParada.cloneNode(true);
+
+              selectCarretelParada.appendChild(optionParada);
+              selectCarretelComplementar.appendChild(optionComp);
           });
       }
       
@@ -1288,7 +1312,8 @@ async function carregarParaEdicao(id) {
 
           if(tipo !== 'sem_parada'){
             camposRegistro.classList.remove("hidden");
-            detalhesParada.classList.toggle("hidden", tipo === "complementar");
+            detalhesParada.classList.toggle("hidden", tipo !== "parada");
+            detalhesComplementar.classList.toggle("hidden", tipo !== "complementar");
 
             $("#inicioParada").value = fromISOToDatetimeLocal(p.inicioParada);
             $("#fimParada").value = fromISOToDatetimeLocal(p.fimParada);
@@ -1318,6 +1343,8 @@ async function carregarParaEdicao(id) {
                   descricaoProblemaOutroTextarea.value = p.descricaoProblemaOutro;
                   descricaoProblemaOutroTextarea.classList.remove('hidden');
               }
+            } else if (tipo === 'complementar') {
+               $("#numeroCarretelComplementar").value = p.numeroCarretelParado || "";
             }
           }
       } else {
@@ -1384,7 +1411,9 @@ async function carregarParaEdicao(id) {
                 <div><strong>Horímetro Final:</strong> ${p.horimetroFinal || "-"}</div>
               `;
             } else if (tipo === 'complementar') {
+               const carretelSubstituido = p.numeroCarretelParado ? `<div><strong>Carretel Substituído:</strong> ${p.numeroCarretelParado}</div>` : '';
                detalhesHTML = `
+                ${carretelSubstituido}
                 <div><strong>Início:</strong> ${formatDateTime(p.inicioParada)} • <strong>Fim:</strong> ${formatDateTime(p.fimParada)}</div>
                 <div><strong>Duração:</strong> ${durh} h</div>
                `;
@@ -1514,6 +1543,11 @@ async function carregarParaEdicao(id) {
                     horimetroInicial: $("#horimetroInicial").value.trim() || null,
                     horimetroFinal: $("#horimetroFinal").value.trim() || null,
                 };
+            } else if (tipoRegistro === 'complementar') { // MODIFICADO: Salva o carretel substituído
+                const carretelSubstituido = $("#numeroCarretelComplementar").value;
+                if (carretelSubstituido) {
+                    payload.numeroCarretelParado = carretelSubstituido;
+                }
             }
         }
 
@@ -1612,7 +1646,8 @@ async function carregarParaEdicao(id) {
                 const carretelInfo = dados.codParada === 'C' ? `Carretel ${dados.numeroCarretelParado}` : '';
                 descricaoCompleta = `PARADA: ${carretelInfo} ${dados.descricaoParadaCodigo || ''} (${descricaoProblemas}${descricaoOutro})`;
               } else if (dados.tipoRegistro === 'complementar') {
-                descricaoCompleta = "IRRIGAÇÃO COMPLEMENTAR";
+                const carretelSubst = dados.numeroCarretelParado ? ` (substituindo ${dados.numeroCarretelParado})` : '';
+                descricaoCompleta = `IRRIGAÇÃO COMPLEMENTAR${carretelSubst}`;
               }
               
               all.push({
@@ -1743,7 +1778,14 @@ async function carregarParaEdicao(id) {
                   paradasPorCarretel[p.numeroCarretelParado] = (paradasPorCarretel[p.numeroCarretelParado] || 0) + duracao;
               }
           }
-          if (p.tipoRegistro === 'complementar') horasComplementar += duracao;
+          // MODIFICADO: Lógica de cálculo da irrigação complementar
+          if (p.tipoRegistro === 'complementar') {
+              horasComplementar += duracao;
+              // Se a irrigação complementar substitui um carretel, conta como "parada" para aquele carretel no cálculo de área
+              if (p.numeroCarretelParado) {
+                  paradasPorCarretel[p.numeroCarretelParado] = (paradasPorCarretel[p.numeroCarretelParado] || 0) + duracao;
+              }
+          }
           if (p.horimetroFinal && p.horimetroInicial) {
               horasHorimetro += (Number(String(p.horimetroFinal).replace(',','.')) - Number(String(p.horimetroInicial).replace(',','.')));
           }
@@ -1942,7 +1984,13 @@ async function carregarParaEdicao(id) {
                     paradasPorCarretel[p.numeroCarretelParado] = (paradasPorCarretel[p.numeroCarretelParado] || 0) + duracao;
                 }
             }
-            if (tipo === 'complementar') horasComplementar += duracao;
+            // MODIFICADO: Lógica de cálculo da irrigação complementar
+            if (tipo === 'complementar') {
+                horasComplementar += duracao;
+                if (p.numeroCarretelParado) {
+                    paradasPorCarretel[p.numeroCarretelParado] = (paradasPorCarretel[p.numeroCarretelParado] || 0) + duracao;
+                }
+            }
             
             if (p.horimetroFinal && p.horimetroInicial) {
                 horasHorimetro += (Number(String(p.horimetroFinal).replace(',','.')) - Number(String(p.horimetroInicial).replace(',','.')));
@@ -1954,7 +2002,10 @@ async function carregarParaEdicao(id) {
                 tipoLabel = `Parada (${p.codParada === 'C' ? 'Carretel' : 'Sistema'})`;
                 problema = (Array.isArray(p.descricaoProblema) ? p.descricaoProblema.join(', ') : '') + (p.descricaoProblemaOutro ? ` (Outro: ${p.descricaoProblemaOutro})` : '');
             }
-            if (tipo === 'complementar') tipoLabel = "Irrig. Compl.";
+            if (tipo === 'complementar') {
+                tipoLabel = "Irrig. Compl.";
+                if(p.numeroCarretelParado) problema = `Substituindo carretel ${p.numeroCarretelParado}`;
+            }
             
             paradasTabela.push({
                 tipoRegistro: tipoLabel,
