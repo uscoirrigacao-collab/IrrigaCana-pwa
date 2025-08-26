@@ -1,5 +1,5 @@
 // sw.js — cache básico para PWA offline (GitHub Pages compatível)
-const CACHE_NAME = "irriga-v2";
+const CACHE_NAME = "irriga-v3";
 const CORE_ASSETS = [
   "./",
   "./index.html",

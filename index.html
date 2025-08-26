@@ -28,10 +28,6 @@
   top: 12px;
 }
 
-
-
-
-
 </style>
 
 </head>
@@ -149,6 +145,20 @@
               <option value="Socaria">Socaria</option>
               </select>
             </div>
+             <div>
+              <label for="redeEletrica" class="block text-sm font-semibold mb-1">Rede Elétrica</label>
+              <select id="redeEletrica" required class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                <option value="">-- Selecione --</option>
+                <option value="RD ELET. ST° ANTONIO">RD ELET. ST° ANTONIO</option>
+                <option value="RD ELET. MATO GROSSO">RD ELET. MATO GROSSO</option>
+                <option value="RD ELET. RIACHÃO">RD ELET. RIACHÃO</option>
+                <option value="RD ELET. PROGRESSO">RD ELET. PROGRESSO</option>
+                <option value="RD ELET. VILA">RD ELET. VILA</option>
+                <option value="RD SUBEST. 69">RD SUBEST. 69</option>
+                <option value="REDE CASA DE FORÇA">REDE CASA DE FORÇA</option>
+                <option value="REDE EQUATORIAL">REDE EQUATORIAL</option>
+              </select>
+            </div>
             <div id="carreteisContainer" class="lg:col-span-3 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 </div>
              <div>
@@ -165,7 +175,8 @@
                <label for="tipoProduto" class="block text-sm font-semibold mb-1">Produto</label>
                <select id="tipoProduto" required class="w-full border rounded px-3 py-2 focus:ring-2 focus:ring-blue-500">
                <option value="">-- Selecione --</option>
-               <option value="Água">Água</option>
+               <option value="Água Limpa">Água Limpa</option>
+               <option value="Água Reuso">Água Reuso</option>
                <option value="Vinhaça">Vinhaça</option>
                </select>
             </div>
@@ -463,7 +474,6 @@
         </fieldset>
 
         <div id="camposRegistro" class="hidden space-y-3">
-            <!-- Campos de Data/Hora (comum para parada e complementar) -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               <div>
                 <label class="block text-sm font-semibold">Início</label>
@@ -477,7 +487,6 @@
             <div class="text-sm text-gray-700">Duração: <span id="duracaoParada">-</span></div>
             <div id="alertOverlap" class="hidden text-sm text-red-600">⚠️ O intervalo informado se sobrepõe a um registro existente.</div>
 
-            <!-- Campos específicos para PARADA -->
             <div id="detalhesParada" class="hidden space-y-3 border-t pt-3 mt-3">
               <div>
                 <label class="block text-sm font-semibold">Tipo de equipamento</label>
@@ -489,6 +498,8 @@
                 </select>
               </div>
               
+               <div id="infoRedeEletrica" class="hidden text-sm p-2 bg-blue-50 border border-blue-200 rounded"></div>
+
               <div id="selecaoCarretelParada" class="hidden">
                   <label class="block text-sm font-semibold">Selecione o Carretel</label>
                   <select id="numeroCarretelParada" class="w-full border rounded px-3 py-2" required></select>
@@ -527,7 +538,6 @@
               </div>
             </div>
             
-            <!-- Campos específicos para IRRIGAÇÃO COMPLEMENTAR -->
             <div id="detalhesComplementar" class="hidden space-y-3 border-t pt-3 mt-3">
                 <p class="text-sm font-medium text-gray-800">Detalhes da Irrigação Complementar</p>
                 <p class="text-xs text-gray-600">Selecione o carretel que foi substituído pelo canhão de espera.</p>
@@ -929,17 +939,39 @@
         }, (err) => { console.error("Falha ao observar áreas:", err); showMessage("Não foi possível carregar os dados em tempo real.", "error"); });
     }
 
-    // Função para alterar o status de finalizada/ativa da área
     async function toggleFinalizadaStatus(docId, newStatus) {
         const isFinalizing = newStatus === true;
-        const confirmMsg = isFinalizing 
-            ? "Tem certeza que deseja finalizar a irrigação para esta área? Ela não aparecerá mais para o operador."
-            : "Tem certeza que deseja reativar a irrigação para esta área? Ela voltará a aparecer para o operador.";
+        const today = new Date().toLocaleDateString('pt-BR'); 
+
+        const confirmMsg = isFinalizing
+            ? "Tem certeza que deseja finalizar a irrigação para esta área?"
+            : "Tem certeza que deseja reativar a irrigação para esta área?";
 
         if (!confirm(confirmMsg)) return;
 
+        let dateInput = null;
+        if (isFinalizing) {
+            dateInput = prompt("Por favor, insira a data de fechamento:", today);
+        } else {
+            dateInput = prompt("Por favor, insira a data de reabertura:", today);
+        }
+
+        if (!dateInput) {
+            showMessage("Ação cancelada. Nenhuma data foi fornecida.", "error");
+            return;
+        }
+
+        const payload = { finalizada: newStatus };
+        if (isFinalizing) {
+            payload.dataFechamento = dateInput;
+            payload.dataAbertura = null; // Limpa a data de abertura
+        } else {
+            payload.dataAbertura = dateInput;
+            payload.dataFechamento = null; // Limpa a data de fechamento
+        }
+
         try {
-            await updateDoc(doc(db, COLLECTION, docId), { finalizada: newStatus });
+            await updateDoc(doc(db, COLLECTION, docId), payload);
             showMessage(isFinalizing ? "Área finalizada com sucesso." : "Área reativada com sucesso.");
         } catch (e) {
             console.error(e);
@@ -947,7 +979,7 @@
         }
     }
 
-    // MODIFICADO: A listagem agora exibe o status "Finalizada" e botões condicionais
+
     async function listarAreasCadastro(snapshot) {
         listaAreasCadastro.innerHTML = `<div class="text-sm text-gray-600">Carregando...</div>`;
         try {
@@ -962,19 +994,23 @@
 
                 const isFinalizada = data.finalizada === true;
                 const card = document.createElement("div");
-                // Adiciona estilo visual para áreas finalizadas
                 card.className = `bg-white rounded shadow p-4 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 ${isFinalizada ? 'opacity-60 bg-gray-50' : ''}`;
                 
-                const atualizado = data.atualizadoEm ? formatDateTime(data.atualizadoEm) : "-";
                 const carreteisStr = Array.isArray(data.carreteis) ? data.carreteis.join(', ') : (data.numeroCarretel || '-');
 
-
-                // Botões mudam com base no status da área
                 const buttonsHTML = isFinalizada
                 ? `<button class="btnReativar w-full bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" data-id="${docSnap.id}">Reativar Irrigação</button>
-                    <button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>` // 
+                   <button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>`
                 : `<button class="btnEditar bg-yellow-400 text-white px-3 py-1 rounded hover:bg-yellow-400" data-id="${docSnap.id}">Editar</button>
-                    <button class="btnFinalizar bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" data-id="${docSnap.id}">Finalizar Irrigação</button>`;
+                   <button class="btnFinalizar bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600" data-id="${docSnap.id}">Finalizar Irrigação</button>`;
+
+                let statusDateHTML = '';
+                if (isFinalizada && data.dataFechamento) {
+                    statusDateHTML = `<div class="text-xs text-red-700 font-medium mt-1"><strong>Área/Croqui fechado em:</strong> ${data.dataFechamento}</div>`;
+                } else if (!isFinalizada && data.dataAbertura) {
+                    statusDateHTML = `<div class="text-xs text-green-700 font-medium mt-1"><strong>Área/Croqui aberto em:</strong> ${data.dataAbertura}</div>`;
+                }
+
 
                 card.innerHTML = `
                   <div class="flex-1 flex flex-col gap-1 text-sm">
@@ -982,6 +1018,7 @@
                       <span class="font-semibold text-base text-blue-900">${data.bloco || "-"}</span>
                       ${isFinalizada ? '<span class="text-xs font-bold text-red-600 bg-red-100 px-2 py-1 rounded-full">IRRIGAÇÃO FINALIZADA</span>' : ''}
                     </div>
+                    ${statusDateHTML}
                     <div><strong>Projeto:</strong> ${data.projeto || "-"}</div>
                     <div><strong>Bombeamento:</strong> ${data.bombeamento || "-"}</div>
                     <div><strong>Carretel(éis):</strong> ${carreteisStr}</div>
@@ -1003,7 +1040,6 @@
             listaAreasCadastro.innerHTML = "";
             listaAreasCadastro.appendChild(frag);
 
-            // Adiciona listeners para os novos botões
             listaAreasCadastro.querySelectorAll(".btnFinalizar").forEach(b => b.addEventListener("click", () => toggleFinalizadaStatus(b.dataset.id, true)));
             listaAreasCadastro.querySelectorAll(".btnReativar").forEach(b => b.addEventListener("click", () => toggleFinalizadaStatus(b.dataset.id, false)));
             
@@ -1038,6 +1074,7 @@ async function carregarParaEdicao(id) {
         $("#bloco").value = d.bloco || "";
         $("#proxBloco").value = d.proxBloco || "";
         $("#numeroEletrobomba").value = d.numeroEletrobomba || "";
+        $("#redeEletrica").value = d.redeEletrica || "";
         
         // Lógica para carretéis
         const qtdCarreteis = d.quantidadeCarreteis || (Array.isArray(d.carreteis) ? d.carreteis.length : 1);
@@ -1097,6 +1134,7 @@ async function carregarParaEdicao(id) {
             projeto: $("#projeto").value.trim(), bombeamento: $("#bombeamento").value.trim(),
             bloco: $("#bloco").value.trim(), proxBloco: $("#proxBloco").value.trim(),
             numeroEletrobomba: $("#numeroEletrobomba").value.trim(), 
+            redeEletrica: $("#redeEletrica").value.trim(),
             quantidadeCarreteis: Number(quantidadeCarreteisInput.value || 0),
             carreteis: carreteis,
             tipoArea: $("#tipoArea").value.trim(), tipoIrrigacao: $("#tipoIrrigacao").value.trim(),
@@ -1216,6 +1254,7 @@ async function carregarParaEdicao(id) {
     const duracaoParadaEl = $("#duracaoParada");
     const overlapAlert = $("#alertOverlap");
     const selecaoCarretelParadaDiv = $("#selecaoCarretelParada");
+    const infoRedeEletricaDiv = $("#infoRedeEletrica");
     const codParadaSelect = $("#codParada");
 
     let areaAtual = null;
@@ -1236,11 +1275,44 @@ async function carregarParaEdicao(id) {
     });
 
     codParadaSelect.addEventListener('change', (e) => {
-        if (e.target.value === 'C') {
-            selecaoCarretelParadaDiv.classList.remove('hidden');
-        } else {
+        const selection = e.target.value;
+        const equipamentoInput = $("#equipamentoProblemaModal");
+        
+        // Esconde e limpa os campos relevantes primeiro
+        selecaoCarretelParadaDiv.classList.add('hidden');
+        infoRedeEletricaDiv.classList.add('hidden');
+        equipamentoInput.value = ''; // Limpa o campo de texto
+
+        if (selection === 'E') { // Eletrobomba
             selecaoCarretelParadaDiv.classList.add('hidden');
+            if (areaAtual && areaAtual.numeroEletrobomba) {
+                infoRedeEletricaDiv.innerHTML = `<strong>N° Eletrobomba Cadastrada:</strong> ${areaAtual.numeroEletrobomba}`;
+                equipamentoInput.value = areaAtual.numeroEletrobomba;
+                infoRedeEletricaDiv.classList.remove('hidden');
+            } else {
+                infoRedeEletricaDiv.innerHTML = `<span class="text-xs text-gray-500">Nenhuma eletrobomba cadastrada para esta área.</span>`;
+                infoRedeEletricaDiv.classList.remove('hidden');
+            }
+        } else if (selection === 'R') { // Rede
+            selecaoCarretelParadaDiv.classList.add('hidden');
+            if (areaAtual && areaAtual.redeEletrica) {
+                infoRedeEletricaDiv.innerHTML = `<strong>Rede Elétrica Cadastrada:</strong> ${areaAtual.redeEletrica}`;
+                equipamentoInput.value = areaAtual.redeEletrica;
+                infoRedeEletricaDiv.classList.remove('hidden');
+            } else {
+                infoRedeEletricaDiv.innerHTML = `<span class="text-xs text-gray-500">Nenhuma rede elétrica cadastrada para esta área.</span>`;
+                infoRedeEletricaDiv.classList.remove('hidden');
+            }
+        } else if (selection === 'C') { // Carretel
+            infoRedeEletricaDiv.classList.add('hidden');
+            selecaoCarretelParadaDiv.classList.remove('hidden');
+            // O valor será preenchido pelo listener do select do carretel
         }
+    });
+
+    // Adiciona um listener para o select do carretel para preencher o campo de problema
+    $("#numeroCarretelParada").addEventListener('change', (e) => {
+        $("#equipamentoProblemaModal").value = e.target.value;
     });
 
     function calcularDuracaoModal() {
@@ -1277,6 +1349,7 @@ async function carregarParaEdicao(id) {
       `;
       formParada.reset();
       selecaoCarretelParadaDiv.classList.add('hidden');
+      infoRedeEletricaDiv.classList.add('hidden');
       $('input[name="tipoRegistro"][value="sem_parada"]').checked = true;
       descricaoProblemaOutroTextarea.value = '';
       descricaoProblemaOutroTextarea.classList.add('hidden');
