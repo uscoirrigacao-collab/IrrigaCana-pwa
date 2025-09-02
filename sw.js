@@ -19,7 +19,7 @@ self.addEventListener("install", (e) => {
         CORE_ASSETS.map((asset) =>
           fetch(asset)
             .then((res) => {
-              if (res.ok) cache.put(asset, res.clone());
+              if (res && res.ok) cache.put(asset, res.clone());
             })
             .catch(() => {
               console.warn("⚠ Não foi possível cachear:", asset);
@@ -47,6 +47,9 @@ self.addEventListener("fetch", (e) => {
 
   const requestURL = new URL(e.request.url);
 
+  // Ignora domínios externos (só intercepta o que for da mesma origem)
+  if (requestURL.origin !== self.location.origin) return;
+
   // Se o arquivo é um dos assets principais, usa cache-first
   if (CORE_ASSETS.some((asset) => requestURL.pathname.endsWith(asset.replace("./", "/")))) {
     e.respondWith(
@@ -54,8 +57,10 @@ self.addEventListener("fetch", (e) => {
         return (
           cached ||
           fetch(e.request).then((res) => {
-            const clone = res.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+            if (res && res.ok) {
+              const clone = res.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+            }
             return res;
           })
         );
@@ -66,8 +71,10 @@ self.addEventListener("fetch", (e) => {
     e.respondWith(
       fetch(e.request)
         .then((res) => {
-          const clone = res.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+          if (res && res.ok) {
+            const clone = res.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+          }
           return res;
         })
         .catch(() => {
@@ -80,3 +87,20 @@ self.addEventListener("fetch", (e) => {
     );
   }
 });
+
+// 🔧 Patch global para tornar listeners de scroll/touch passivos por padrão
+(function() {
+  const originalAddEventListener = EventTarget.prototype.addEventListener;
+  EventTarget.prototype.addEventListener = function(type, listener, options) {
+    if (type === 'touchstart' || type === 'touchmove' || type === 'wheel' || type === 'mousewheel') {
+      if (options === undefined) {
+        options = { passive: true };
+      } else if (typeof options === 'boolean') {
+        options = { capture: options, passive: true };
+      } else if (typeof options === 'object' && options.passive === undefined) {
+        options.passive = true;
+      }
+    }
+    return originalAddEventListener.call(this, type, listener, options);
+  };
+})();
