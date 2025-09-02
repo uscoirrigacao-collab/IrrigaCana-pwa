@@ -1,0 +1,46 @@
+.tab-btn.active {
+  border-color: #2563eb; /* Azul principal */
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.tab-btn {
+   transition: all 0.2s ease-in-out;
+}
+
+.aba-bloqueada {
+  opacity: 0.5;
+  pointer-events: none;
+  cursor: not-allowed;
+}
+
+#menuAbas {
+  opacity: 0;
+  transform: scaleY(0.95);
+  transform-origin: top right;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+#menuAbas.show {
+  opacity: 1;
+  transform: scaleY(1);
+}
+
+.menu-icon .bar {
+  left: 0;
+  transition: all 0.3s ease-in-out;
+}
+
+.menu-icon.open .bar:nth-child(1) {
+  transform: rotate(45deg);
+  top: 12px;
+}
+
+.menu-icon.open .bar:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-icon.open .bar:nth-child(3) {
+  transform: rotate(-45deg);
+  top: 12px;
+}
